@@ -1,0 +1,36 @@
+{
+  "co_quan_chu_quan": "BỘ TÀI CHÍNH",
+  "co_quan_ban_hanh": "VỤ TỔ CHỨC CÁN BỘ",
+  "dia_danh": "Hà Nội",
+  "lanh_dao": [
+    {
+      "id": "1",
+      "ten": "Nguyễn Văn B",
+      "chuc_vu": "Vụ trưởng",
+      "quyen_han_ky": "TL. BỘ TRƯỞNG",
+      "kt_chuc_vu": "",
+      "chuc_vu_ky": "VỤ TRƯỞNG VỤ TỔ CHỨC CÁN BỘ"
+    },
+    {
+      "id": "2",
+      "ten": "Nguyễn Xuân X",
+      "chuc_vu": "Phó Vụ trưởng",
+      "quyen_han_ky": "TL. BỘ TRƯỞNG",
+      "kt_chuc_vu": "KT. VỤ TRƯỞNG VỤ TỔ CHỨC CÁN BỘ",
+      "chuc_vu_ky": "PHÓ VỤ TRƯỞNG"
+    },
+    {
+      "id": "3",
+      "ten": "Trần Văn A",
+      "chuc_vu": "Thứ trưởng",
+      "quyen_han_ky": "KT. BỘ TRƯỞNG",
+      "kt_chuc_vu": "",
+      "chuc_vu_ky": "THỨ TRƯỞNG"
+    }
+  ],
+  "noi_nhan_mac_dinh": [
+    "Như trên",
+    "Bộ trưởng (để báo cáo)",
+    "Lưu: VT, TCCB"
+  ]
+}

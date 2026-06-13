@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trình Tạo Văn Bản Hành Chính - Chuẩn NĐ30</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="logo">
+                <span class="material-icons-round">description</span>
+                <h2>NĐ30 DocGen</h2>
+            </div>
+            <nav class="nav-menu">
+                <button class="nav-btn active" data-tab="create-tab" id="btn-tab-create">
+                    <span class="material-icons-round">edit_note</span>
+                    <span>Tạo Văn Bản</span>
+                </button>
+                <button class="nav-btn" data-tab="ref-tab" id="btn-tab-ref">
+                    <span class="material-icons-round">folder</span>
+                    <span>Tài Liệu Tham Khảo</span>
+                </button>
+                <button class="nav-btn" data-tab="settings-tab" id="btn-tab-settings">
+                    <span class="material-icons-round">settings</span>
+                    <span>Cấu Hình Hệ Thống</span>
+                </button>
+            </nav>
+            <div class="sidebar-footer">
+                <p>Phiên bản 1.0.0</p>
+                <p>Chuẩn Nghị định 30/2020/NĐ-CP</p>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main-content">
+            <!-- TAB 1: TẠO VĂN BẢN -->
+            <section id="create-tab" class="tab-content active">
+                <header class="content-header">
+                    <div>
+                        <h1>Tạo Văn Bản Hành Chính</h1>
+                        <p class="subtitle">Sinh file Word tự động, chính xác 100% thể thức văn thư.</p>
+                    </div>
+                </header>
+
+                <div class="grid-layout">
+                    <!-- Form điền thông tin -->
+                    <div class="card form-card">
+                        <div class="card-header">
+                            <span class="material-icons-round text-primary">feed</span>
+                            <h3>Thông tin văn bản</h3>
+                        </div>
+
+                        <form id="doc-form">
+                            <!-- Loại văn bản -->
+                            <div class="form-row">
+                                <div class="form-group col-12">
+                                    <label for="loai_van_ban">Loại văn bản hành chính</label>
+                                    <select id="loai_van_ban" class="form-control" required>
+                                        <option value="cong_van">Công văn (Hành chính thông thường)</option>
+                                        <option value="quyet_dinh">Quyết định</option>
+                                        <option value="thong_bao">Thông báo</option>
+                                        <option value="bien_ban">Biên bản họp</option>
+                                        <option value="to_trinh">Tờ trình</option>
+                                        <option value="ke_hoach">Kế hoạch</option>
+                                        <option value="bao_cao">Báo cáo</option>
+                                        <option value="giay_moi">Giấy mời</option>
+                                        <option value="nghi_quyet">Nghị quyết</option>
+                                        <option value="huong_dan">Hướng dẫn</option>
+                                        <option value="quy_dinh">Quy định</option>
+                                        <option value="quy_che">Quy chế</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <hr class="divider">
+
+                            <!-- Thông tin cơ quan & địa danh -->
+                            <div class="form-row">
+                                <div class="form-group col-6">
+                                    <label for="co_quan_chu_quan">Cơ quan chủ quản (nếu có)</label>
+                                    <input type="text" id="co_quan_chu_quan" class="form-control" placeholder="VD: BỘ TÀI CHÍNH">
+                                </div>
+                                <div class="form-group col-6">
+                                    <label for="co_quan_ban_hanh">Cơ quan ban hành</label>
+                                    <input type="text" id="co_quan_ban_hanh" class="form-control" placeholder="VD: VỤ TỔ CHỨC CÁN BỘ" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group col-4">
+                                    <label for="so_ky_hieu">Số, ký hiệu văn bản</label>
+                                    <input type="text" id="so_ky_hieu" class="form-control" placeholder="VD: Số      /BTC-TCCB" required>
+                                </div>
+                                <div class="form-group col-4">
+                                    <label for="dia_danh">Địa danh ban hành</label>
+                                    <input type="text" id="dia_danh" class="form-control" placeholder="VD: Hà Nội" required>
+                                </div>
+                                <div class="form-group col-4">
+                                    <label for="ngay_ban_hanh">Ngày ban hành</label>
+                                    <input type="date" id="ngay_ban_hanh" class="form-control" required>
+                                </div>
+                            </div>
+
+                            <hr class="divider">
+
+                            <!-- Tiêu đề / Trích yếu -->
+                            <div class="form-group">
+                                <label id="label-trich_yeu" for="trich_yeu">Trích yếu nội dung (hoặc V/v...)</label>
+                                <input type="text" id="trich_yeu" class="form-control" placeholder="VD: V/v báo cáo công tác tổ chức cán bộ quý I/2026" required>
+                            </div>
+
+                            <!-- Nhóm Căn cứ (Hiện khi chọn Quyết định/Nghị quyết) -->
+                            <div id="group-can_cu" class="form-group dynamic-group hidden">
+                                <div class="flex-between">
+                                    <label>Các căn cứ pháp lý</label>
+                                    <button type="button" class="btn btn-sm btn-icon" id="btn-add-can-cu">
+                                        <span class="material-icons-round">add</span> Thêm căn cứ
+                                    </button>
+                                </div>
+                                <div id="can-cu-list" class="dynamic-list">
+                                    <!-- Dynamic inputs will go here -->
+                                </div>
+                            </div>
+
+                            <!-- Nhóm Kính gửi (Hiện khi chọn Công văn / Tờ trình) -->
+                            <div id="group-kinh_gui" class="form-group dynamic-group">
+                                <div class="flex-between">
+                                    <label>Kính gửi</label>
+                                    <button type="button" class="btn btn-sm btn-icon" id="btn-add-kinh-gui">
+                                        <span class="material-icons-round">add</span> Thêm kính gửi
+                                    </button>
+                                </div>
+                                <div id="kinh-gui-list" class="dynamic-list">
+                                    <!-- Dynamic inputs will go here -->
+                                </div>
+                            </div>
+
+                            <!-- Dòng mở đầu cho Quyết định -->
+                            <div id="group-dong-quyet-dinh" class="form-row dynamic-group hidden">
+                                <div class="form-group col-6">
+                                    <label for="theo_de_nghi">Theo đề nghị của</label>
+                                    <input type="text" id="theo_de_nghi" class="form-control" placeholder="VD: Theo đề nghị của Vụ trưởng Vụ TCCB.">
+                                </div>
+                                <div class="form-group col-6">
+                                    <label for="dong_quyet_dinh">Từ khóa quyết định</label>
+                                    <input type="text" id="dong_quyet_dinh" class="form-control" placeholder="VD: QUYẾT ĐỊNH:">
+                                </div>
+                            </div>
+
+                            <!-- Nội dung văn bản -->
+                            <div class="form-group">
+                                <label for="noi_dung">Nội dung văn bản</label>
+                                <textarea id="noi_dung" class="form-control" rows="8" placeholder="Nhập nội dung chính của văn bản ở đây. Xuống dòng tự động tạo đoạn mới." required></textarea>
+                                <span class="help-text">Hệ thống sẽ tự động định dạng và thêm ký tự kết thúc văn bản (./.) vào cuối.</span>
+                            </div>
+
+                            <!-- Nhóm Điều khoản (Hiện khi chọn Quyết định) -->
+                            <div id="group-cac_dieu" class="form-group dynamic-group hidden">
+                                <div class="flex-between">
+                                    <label>Các Điều khoản</label>
+                                    <button type="button" class="btn btn-sm btn-icon" id="btn-add-dieu">
+                                        <span class="material-icons-round">add</span> Thêm Điều
+                                    </button>
+                                </div>
+                                <div id="dieu-list" class="dynamic-list">
+                                    <!-- Dynamic inputs will go here -->
+                                </div>
+                            </div>
+
+                            <!-- Nhóm người ký Biên bản (Hiện khi chọn Biên bản) -->
+                            <div id="group-bien-ban-signatures" class="form-row dynamic-group hidden">
+                                <div class="form-group col-6">
+                                    <label for="chuc_vu_thu_ky">Chức danh bên trái</label>
+                                    <input type="text" id="chuc_vu_thu_ky" class="form-control" placeholder="VD: THƯ KÝ">
+                                    <label for="thu_ky" class="sub-label">Tên thư ký</label>
+                                    <input type="text" id="thu_ky" class="form-control" placeholder="VD: Nguyễn Văn Thư Ký">
+                                </div>
+                                <div class="form-group col-6">
+                                    <label for="chuc_vu_chu_tri">Chức danh bên phải</label>
+                                    <input type="text" id="chuc_vu_chu_tri" class="form-control" placeholder="VD: CHỦ TRÌ">
+                                    <label for="chu_toa" class="sub-label">Tên chủ trì</label>
+                                    <input type="text" id="chu_toa" class="form-control" placeholder="VD: Trần Văn Chủ Trì">
+                                </div>
+                            </div>
+
+                            <hr class="divider">
+
+                            <!-- Người ký mặc định (Ẩn khi chọn Biên bản) -->
+                            <div id="group-don-signature" class="form-row">
+                                <div class="form-group col-6">
+                                    <label for="select-lanh-dao">Chọn lãnh đạo nhanh</label>
+                                    <select id="select-lanh-dao" class="form-control">
+                                        <option value="">-- Chọn lãnh đạo đã cấu hình --</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-6">
+                                    <label for="quyen_han_ky">Quyền hạn ký (TM. / KT. / TL.)</label>
+                                    <input type="text" id="quyen_han_ky" class="form-control" placeholder="VD: TL. BỘ TRƯỞNG">
+                                </div>
+                                <div class="form-group col-6 mt-3">
+                                    <label for="kt_chuc_vu">Ký thay chức vụ (nếu kết hợp TL+KT)</label>
+                                    <input type="text" id="kt_chuc_vu" class="form-control" placeholder="VD: KT. VỤ TRƯỞNG VỤ TỔ CHỨC CÁN BỘ">
+                                </div>
+                                <div class="form-group col-6 mt-3">
+                                    <label for="chuc_vu_ky">Chức danh người ký</label>
+                                    <input type="text" id="chuc_vu_ky" class="form-control" placeholder="VD: VỤ TRƯỞNG VỤ TỔ CHỨC CÁN BỘ" required>
+                                </div>
+                                <div class="form-group col-12 mt-3">
+                                    <label for="nguoi_ky">Họ tên người ký</label>
+                                    <input type="text" id="nguoi_ky" class="form-control" placeholder="VD: Nguyễn Văn A" required>
+                                </div>
+                            </div>
+
+                            <hr class="divider">
+
+                            <!-- Nơi nhận -->
+                            <div class="form-group">
+                                <div class="flex-between">
+                                    <label>Nơi nhận</label>
+                                    <button type="button" class="btn btn-sm btn-icon" id="btn-add-noi-nhan">
+                                        <span class="material-icons-round">add</span> Thêm nơi nhận
+                                    </button>
+                                </div>
+                                <div id="noi-nhan-list" class="dynamic-list">
+                                    <!-- Dynamic inputs will go here -->
+                                </div>
+                            </div>
+
+                            <!-- Submit -->
+                            <div class="form-actions">
+                                <button type="submit" class="btn btn-primary btn-large" id="btn-submit">
+                                    <span class="material-icons-round">download</span>
+                                    <span>Tạo File Văn Bản (.docx)</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Sidebar Preview/Hướng dẫn nhanh -->
+                    <div class="card preview-card">
+                        <div class="preview-tabs">
+                            <button type="button" class="preview-tab-btn active" data-prev-tab="preview-live-pane" id="btn-prev-live">
+                                <span class="material-icons-round">preview</span>
+                                <span>Xem Trước Văn Bản (A4)</span>
+                            </button>
+                            <button type="button" class="preview-tab-btn" data-prev-tab="preview-guide-pane" id="btn-prev-guide">
+                                <span class="material-icons-round">menu_book</span>
+                                <span>Lưu Ý Thể Thức</span>
+                            </button>
+                        </div>
+
+                        <!-- Pane 1: Bản xem trước Live A4 -->
+                        <div id="preview-live-pane" class="preview-pane active">
+                            <div class="preview-scroll-wrapper">
+                                <div class="preview-a4-page" id="a4-page">
+                                    <!-- Header: Cơ quan + Quốc hiệu -->
+                                    <table class="a4-header-table">
+                                        <tr>
+                                            <td class="a4-header-left">
+                                                <div id="prev-co_quan_chu_quan" class="a4-upper">BỘ TÀI CHÍNH</div>
+                                                <div id="prev-co_quan_ban_hanh" class="a4-upper a4-bold">VỤ TỔ CHỨC CÁN BỘ</div>
+                                                <div class="a4-line-short"></div>
+                                                <div id="prev-so_ky_hieu" class="a4-so-ky-hieu">Số:       /BTC-TCCB</div>
+                                            </td>
+                                            <td class="a4-header-right">
+                                                <div class="a4-upper a4-bold">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>
+                                                <div class="a4-bold">Độc lập - Tự do - Hạnh phúc</div>
+                                                <div class="a4-line-long"></div>
+                                                <div id="prev-dia_danh_ngay" class="a4-italic">Hà Nội, ngày 17 tháng 03 năm 2026</div>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                    
+                                    <!-- Tên loại / Trích yếu -->
+                                    <div id="prev-title-block" class="a4-title-block">
+                                        <div id="prev-ten_loai_vb" class="a4-upper a4-bold">QUYẾT ĐỊNH</div>
+                                        <div id="prev-trich_yeu_vb" class="a4-trich-yeu">Về việc...</div>
+                                        <div class="a4-line-title"></div>
+                                    </div>
+
+                                    <!-- Kính gửi (Công văn / Tờ trình) -->
+                                    <div id="prev-kinh_gui_block" class="a4-kinh-gui-block hidden">
+                                        <span class="a4-italic">Kính gửi:</span> <span id="prev-kinh_gui_list"></span>
+                                    </div>
+
+                                    <!-- Dòng mở đầu (Quyết định) -->
+                                    <div id="prev-dong_quyet_dinh_block" class="a4-dong-quyet-dinh-block hidden">
+                                        <div id="prev-theo_de_nghi" class="a4-italic">Theo đề nghị của Vụ trưởng...</div>
+                                        <div id="prev-dong_quyet_dinh" class="a4-bold a4-upper">QUYẾT ĐỊNH:</div>
+                                    </div>
+
+                                    <!-- Nội dung chính -->
+                                    <div id="prev-noi_dung" class="a4-noi-dung-block" contenteditable="true" title="Chỉnh sửa nội dung trực tiếp tại đây">
+                                        Nội dung chính...
+                                    </div>
+
+                                    <!-- Các Điều khoản -->
+                                    <div id="prev-cac_dieu" class="a4-cac-dieu-block hidden" contenteditable="true" title="Chỉnh sửa các Điều trực tiếp tại đây">
+                                        <!-- Điều 1, 2... -->
+                                    </div>
+
+                                    <!-- Footer: Nơi nhận + Chữ ký -->
+                                    <table class="a4-footer-table">
+                                        <tr>
+                                            <td class="a4-footer-left">
+                                                <div class="a4-noi-nhan-title a4-bold a4-italic">Nơi nhận:</div>
+                                                <div id="prev-noi_nhan_list" class="a4-noi-nhan-list">
+                                                    <!-- Nơi nhận -->
+                                                </div>
+                                            </td>
+                                            <td class="a4-footer-right">
+                                                <!-- Chữ ký đơn -->
+                                                <div id="prev-signature-single">
+                                                    <div id="prev-quyen_han_ky" class="a4-upper a4-bold">TL. BỘ TRƯỞNG</div>
+                                                    <div id="prev-kt_chuc_vu" class="a4-upper a4-bold"></div>
+                                                    <div id="prev-chuc_vu_ky" class="a4-upper">VỤ TRƯỞNG VỤ TỔ CHỨC CÁN BỘ</div>
+                                                    <div class="a4-sig-space"></div>
+                                                    <div id="prev-nguoi_ky" class="a4-bold">Nguyễn Văn B</div>
+                                                </div>
+                                                <!-- Chữ ký đôi (Biên bản) -->
+                                                <table id="prev-signature-double" class="a4-double-sig hidden">
+                                                    <tr>
+                                                        <td class="a4-double-sig-col">
+                                                            <div id="prev-chuc_vu_thu_ky" class="a4-bold a4-upper">THƯ KÝ</div>
+                                                            <div class="a4-sig-space"></div>
+                                                            <div id="prev-thu_ky" class="a4-bold">Nguyễn Văn Thư Ký</div>
+                                                        </td>
+                                                        <td class="a4-double-sig-col">
+                                                            <div id="prev-chuc_vu_chu_tri" class="a4-bold a4-upper">CHỦ TRÌ</div>
+                                                            <div class="a4-sig-space"></div>
+                                                            <div id="prev-chu_toa" class="a4-bold">Trần Văn Chủ Trì</div>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="preview-a4-footer-tip">
+                                <span class="material-icons-round">info</span> Bạn có thể click trực tiếp vào văn bản A4 để sửa nội dung.
+                            </div>
+                        </div>
+
+                        <!-- Pane 2: Hướng dẫn thể thức tĩnh -->
+                        <div id="preview-guide-pane" class="preview-pane">
+                            <div class="guide-content">
+                                <div class="guide-item">
+                                    <div class="guide-icon"><span class="material-icons-round">done</span></div>
+                                    <div class="guide-text">
+                                        <h4>Dấu kết thúc văn bản</h4>
+                                        <p>Tất cả văn bản hành chính kết thúc bằng <strong>./.</strong> ở cuối câu cuối cùng.</p>
+                                    </div>
+                                </div>
+                                <div class="guide-item">
+                                    <div class="guide-icon"><span class="material-icons-round">done</span></div>
+                                    <div class="guide-text">
+                                        <h4>Nơi nhận và Dấu câu</h4>
+                                        <p>Các dòng nơi nhận ngăn cách bằng dấu <strong>chấm phẩy (;)</strong>. Dòng cuối lưu (Lưu: VT...) kết thúc bằng dấu <strong>chấm (.)</strong>.</p>
+                                    </div>
+                                </div>
+                                <div class="guide-item">
+                                    <div class="guide-icon"><span class="material-icons-round">done</span></div>
+                                    <div class="guide-text">
+                                        <h4>Kính gửi</h4>
+                                        <p>Phần "Kính gửi" trong công văn hoặc tờ trình in thường, cỡ chữ 14, <strong>không in đậm</strong>.</p>
+                                    </div>
+                                </div>
+                                <div class="guide-item">
+                                    <div class="guide-icon"><span class="material-icons-round">done</span></div>
+                                    <div class="guide-text">
+                                        <h4>Quyền hạn ký</h4>
+                                        <p>Dùng dấu chấm: <strong>TM. BỘ TRƯỞNG</strong> hoặc <strong>KT. VỤ TRƯỞNG</strong>, không dùng dấu gạch chéo.</p>
+                                    </div>
+                                </div>
+                                <div class="guide-item">
+                                    <div class="guide-icon"><span class="material-icons-round">done</span></div>
+                                    <div class="guide-text">
+                                        <h4>Kết hợp TL + KT (3 dòng)</h4>
+                                        <p>Khi Thứ trưởng ký thay uỷ quyền: dòng 1 (TL. BỘ TRƯỞNG - đậm), dòng 2 (KT. VỤ TRƯỞNG... - đậm), dòng 3 (PHÓ VỤ TRƯỞNG - thường).</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 2: TÀI LIỆU THAM KHẢO -->
+            <section id="ref-tab" class="tab-content">
+                <header class="content-header">
+                    <div>
+                        <h1>Tài Liệu Tham Khảo</h1>
+                        <p class="subtitle">Tải lên các tài liệu phục vụ cho công tác soạn thảo và theo dõi.</p>
+                    </div>
+                </header>
+
+                <div class="grid-layout">
+                    <!-- Khu vực upload -->
+                    <div class="card form-card">
+                        <div class="card-header">
+                            <span class="material-icons-round text-primary">cloud_upload</span>
+                            <h3>Tải tài liệu lên hệ thống</h3>
+                        </div>
+                        <div class="upload-zone" id="drop-zone">
+                            <span class="material-icons-round upload-icon">file_upload</span>
+                            <p class="upload-text">Kéo thả file tài liệu vào đây hoặc <span>chọn từ máy tính</span></p>
+                            <input type="file" id="file-input" hidden>
+                            <p class="upload-limits">Hỗ trợ các file văn bản, tài liệu tham khảo (.docx, .pdf, .json, .txt)</p>
+                        </div>
+                        <div class="progress-container hidden" id="upload-progress-container">
+                            <div class="progress-bar" id="upload-progress"></div>
+                            <span id="progress-percent">0%</span>
+                        </div>
+                    </div>
+
+                    <!-- Danh sách tài liệu -->
+                    <div class="card preview-card">
+                        <div class="card-header">
+                            <span class="material-icons-round text-success">list_alt</span>
+                            <h3>Tài liệu đã tải lên</h3>
+                        </div>
+                        <div class="doc-list-container">
+                            <ul class="doc-list" id="documents-list">
+                                <!-- Dynamic document list will go here -->
+                                <li class="doc-empty">
+                                    <span class="material-icons-round">folder_open</span>
+                                    <p>Chưa có tài liệu nào được tải lên.</p>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TAB 3: CÀI ĐẶT HỆ THỐNG -->
+            <section id="settings-tab" class="tab-content">
+                <header class="content-header">
+                    <div>
+                        <h1>Cấu Hình Hệ Thống</h1>
+                        <p class="subtitle">Lưu trữ các thông tin lặp đi lặp lại để tự động điền khi tạo văn bản.</p>
+                    </div>
+                </header>
+
+                <div class="card settings-card">
+                    <div class="card-header">
+                        <span class="material-icons-round text-primary">admin_panel_settings</span>
+                        <h3>Thông tin cơ quan ban hành mặc định</h3>
+                    </div>
+                    <form id="settings-form">
+                        <div class="form-row">
+                            <div class="form-group col-4">
+                                <label for="set_co_quan_chu_quan">Cơ quan chủ quản</label>
+                                <input type="text" id="set_co_quan_chu_quan" class="form-control" placeholder="VD: BỘ TÀI CHÍNH">
+                            </div>
+                            <div class="form-group col-4">
+                                <label for="set_co_quan_ban_hanh">Cơ quan ban hành</label>
+                                <input type="text" id="set_co_quan_ban_hanh" class="form-control" placeholder="VD: VỤ TỔ CHỨC CÁN BỘ" required>
+                            </div>
+                            <div class="form-group col-4">
+                                <label for="set_dia_danh">Địa danh mặc định</label>
+                                <input type="text" id="set_dia_danh" class="form-control" placeholder="VD: Hà Nội" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group mt-3">
+                            <label for="set_noi_nhan">Nơi nhận mặc định (mỗi dòng một nơi nhận)</label>
+                            <textarea id="set_noi_nhan" class="form-control" rows="4" placeholder="VD: Như trên&#10;Lưu: VT, TCCB"></textarea>
+                        </div>
+
+                        <div class="settings-section mt-4">
+                            <div class="flex-between">
+                                <h3>Danh sách Lãnh đạo / Người ký</h3>
+                                <button type="button" class="btn btn-sm" id="btn-add-leader">
+                                    <span class="material-icons-round">add</span> Thêm lãnh đạo
+                                </button>
+                            </div>
+                            <div class="leader-table-container">
+                                <table class="leader-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Họ và Tên</th>
+                                            <th>Chức danh</th>
+                                            <th>Quyền hạn ký</th>
+                                            <th>Chức danh ký (NĐ30)</th>
+                                            <th>Ký thay/Ủy quyền (kết hợp)</th>
+                                            <th>Hành động</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="leaders-tbody">
+                                        <!-- Dynamic leaders rows will go here -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="form-actions mt-4">
+                            <button type="submit" class="btn btn-primary" id="btn-save-settings">
+                                <span class="material-icons-round">save</span>
+                                <span>Lưu cấu hình hệ thống</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="toast" class="toast hidden">
+        <span class="material-icons-round toast-icon">info</span>
+        <span id="toast-message" class="toast-message">Message goes here</span>
+    </div>
+
+    <!-- Custom Script -->
+    <script src="client.js"></script>
+</body>
+</html>
