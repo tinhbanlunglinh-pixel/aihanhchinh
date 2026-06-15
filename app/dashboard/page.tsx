@@ -16,6 +16,7 @@ import { ApiSettings } from '@/lib/ai';
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<string>('ai_compose');
   const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(false);
+  const [user, setUser] = useState<{name: string, role: string} | null>(null);
   const [editorData, setEditorData] = useState<DocTemplate>({
     id: 'cong_van',
     name: 'Công văn',
@@ -48,6 +49,13 @@ export default function Dashboard() {
 
   // Load Settings from LocalStorage on mount
   useEffect(() => {
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch {}
+    }
+
     const savedSettings = localStorage.getItem('ai_van_ban_settings');
     if (savedSettings) {
       try {
@@ -205,11 +213,11 @@ export default function Dashboard() {
               <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
               <span>Offline/Online Mode</span>
             </span>
-            <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs shadow-md shadow-blue-500/10">
-              CB
+            <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs shadow-md shadow-blue-500/10 uppercase">
+              {user ? user.name.charAt(0) : 'CB'}
             </div>
             <span className="hidden sm:inline text-xs font-semibold text-slate-600">
-              Cán bộ xã Lũng Cú
+              {user ? `${user.name} - ${user.role}` : 'Xã Nhữ Khê'}
             </span>
           </div>
         </header>

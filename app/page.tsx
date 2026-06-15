@@ -17,7 +17,7 @@ export default function Home() {
           <Link href="/dashboard" className="hidden sm:inline-flex text-sm font-medium text-slate-400 hover:text-white transition-colors">
             Tính năng
           </Link>
-          <Link href="/dashboard" className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-semibold shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 transition-all active:scale-95">
+          <Link href="/login" className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-semibold shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 transition-all active:scale-95">
             <span>Vào Dashboard</span>
             <span className="material-icons-round text-sm">arrow_forward</span>
           </Link>
@@ -62,7 +62,7 @@ export default function Home() {
           {/* CTA Button */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
-              href="/dashboard"
+              href="/login"
               className="shimmer-btn inline-flex items-center justify-center gap-3 text-lg px-10 py-5 rounded-2xl"
             >
               <span className="material-icons-round text-2xl">edit_document</span>
@@ -154,7 +154,7 @@ export default function Home() {
               Trải nghiệm công cụ soạn thảo văn bản hành chính thông minh nhất, được thiết kế riêng cho cán bộ công chức Việt Nam.
             </p>
             <Link
-              href="/dashboard"
+              href="/login"
               className="inline-flex items-center gap-2 px-8 py-4 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl text-base font-bold shadow-lg shadow-indigo-500/25 hover:shadow-indigo-500/40 transition-all active:scale-95"
             >
               <span className="material-icons-round">edit_document</span>

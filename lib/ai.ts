@@ -94,6 +94,10 @@ Hợp đồng, Công điện, Bản ghi nhớ
 
 ### 13. Biên bản
 - 2 chữ ký: Thư ký (bên trái) + Chủ trì (bên phải)
+
+### 14. Bối cảnh pháp lý chuyên ngành Quân sự
+- Các luật áp dụng: Luật Quốc phòng 2018; Luật Dân quân tự vệ 2019; Luật Nghĩa vụ quân sự 2015; Luật Lực lượng dự bị động viên 2019.
+- LƯU Ý ĐẶC BIỆT: Kể từ ngày 01/07/2025, Việt Nam thực hiện tổ chức chính quyền địa phương 2 cấp (chỉ còn cấp Tỉnh và cấp Xã). TUYỆT ĐỐI KHÔNG CÒN CẤP HUYỆN. Các cơ quan cấp huyện không còn tồn tại (Không sử dụng "UBND huyện", "Ban CHQS huyện"). Cơ quan cấp trên trực tiếp của xã là cấp Tỉnh (ví dụ: Bộ CHQS tỉnh Tuyên Quang).
 `;
 
 // === BẢNG VIẾT TẮT ĐƠN VỊ (QĐ 4114/QĐ-BTC) ===
@@ -306,11 +310,12 @@ Mọi văn bản bạn sinh ra phải tuân thủ nghiêm ngặt văn phong hàn
 ${ND30_KNOWLEDGE}
 
 QUY TẮC BẮT BUỘC:
-1. KHÔNG được bịa đặt căn cứ pháp lý. Chỉ sử dụng căn cứ do người dùng cung cấp hoặc để trống dạng: 'Căn cứ Luật [Chờ bổ sung]...'.
+1. Về căn cứ pháp lý: Nếu người dùng không cung cấp căn cứ, BẠN PHẢI TỰ ĐỘNG BỔ SUNG các Luật, Nghị định, Thông tư mới nhất có liên quan chặt chẽ đến chủ đề văn bản (đặc biệt là các Luật trong lĩnh vực Quân sự, Quốc phòng nếu có). KHÔNG để trống chờ bổ sung. Nếu người dùng đã cung cấp, hãy dùng các căn cứ đó và bổ sung thêm nếu cần thiết.
 2. Nếu thiếu thông tin để sinh nội dung chi tiết, bạn bắt buộc phải sử dụng cụm từ '[Chờ bổ sung]' tại vị trí đó để người dùng tự điền.
-3. Không tự tiện vẽ Quốc hiệu hay chữ ký trong văn bản, chỉ tập trung sinh NỘI DUNG CHÍNH (phần body text).
-4. Viết nội dung dạng các đoạn văn hoặc các điều khoản rõ ràng.
-5. Văn bản PHẢI kết thúc bằng dấu "./.".`;
+3. BẮT BUỘC CHỈ SINH PHẦN NỘI DUNG CHÍNH CỦA VĂN BẢN (từ sau phần Căn cứ pháp lý hoặc Kính gửi, đến trước chữ ký). TUYỆT ĐỐI KHÔNG sinh Quốc hiệu, Tiêu ngữ, Tên cơ quan, Số ký hiệu, Nơi nhận, Chữ ký.
+4. BẮT BUỘC CHỈ TRẢ VỀ PLAIN TEXT. TUYỆT ĐỐI KHÔNG DÙNG MARKDOWN (như **, *, #, v.v.). TUYỆT ĐỐI KHÔNG DÙNG HTML (như <div>, <p>, <table>, v.v.). KHÔNG kèm theo lời chào, lời dẫn hay giải thích (như "Dưới đây là...", "Bạn là...").
+5. Viết nội dung dạng các đoạn văn hoặc các điều khoản rõ ràng.
+6. Văn bản PHẢI kết thúc bằng dấu "./.".`;
 
     const prompt = `Loại văn bản: ${loaiText}
 Chủ đề văn bản: ${inputs.chu_de}
@@ -373,7 +378,7 @@ JSON object phải có đúng cấu trúc sau:
 
 QUY TẮC QUAN TRỌNG:
 1. "kinh_gui": Chỉ dùng cho Công văn và Tờ trình. Các loại VB khác để mảng rỗng [].
-2. "can_cu": Dùng cho Quyết định, Nghị quyết, Chỉ thị. KHÔNG bịa căn cứ — nếu người dùng không cung cấp, để mảng rỗng [].
+2. "can_cu": Dùng cho Quyết định, Nghị quyết, Chỉ thị. Nếu người dùng không cung cấp, BẠN PHẢI TỰ ĐỘNG BỔ SUNG các Luật, Nghị định, Thông tư mới nhất và phù hợp nhất với nội dung văn bản dưới dạng mảng các chuỗi.
 3. "cac_dieu": Chỉ dùng cho Quyết định, Nghị quyết, Chỉ thị, Quy chế. Các loại khác để mảng rỗng [].
 4. "dong_quyet_dinh": Chỉ dùng "QUYẾT ĐỊNH:" cho QĐ, "QUYẾT NGHỊ:" cho NQ. Các loại khác để chuỗi rỗng "".
 5. "theo_de_nghi": Chỉ dùng cho QĐ. Các loại khác để chuỗi rỗng "".
@@ -384,7 +389,8 @@ QUY TẮC QUAN TRỌNG:
 10. "so_ky_hieu": Luôn để trống số (dùng khoảng trống), chỉ điền mã loại và cơ quan.
 11. Nếu loại VB là Quyết định có cac_dieu, thì "noi_dung" là phần mở đầu TRƯỚC các điều khoản.
 12. Biên bản: "noi_nhan" để mảng rỗng. Không cần quyen_han_ky.
-13. JSON phải hợp lệ — KHÔNG có trailing comma, KHÔNG có comment.`;
+13. JSON phải hợp lệ — KHÔNG có trailing comma, KHÔNG có comment.
+14. TUYỆT ĐỐI KHÔNG dùng Markdown (**, *, #) hay HTML trong bất kỳ trường nào của JSON. Mọi giá trị chuỗi phải là văn bản thuần túy (plain text).`;
 
 export interface SmartComposeInput {
   loai_van_ban: string;
@@ -501,7 +507,7 @@ Thông tin cơ quan:
 - Chức vụ ký: ${input.chuc_vu_ky || '[Tự xác định phù hợp]'}
 - Quyền hạn ký: ${input.quyen_han_ky || '[Tự xác định phù hợp theo cấp ký]'}
 
-${input.can_cu_phap_ly ? `Căn cứ pháp lý do người dùng cung cấp:\n${input.can_cu_phap_ly}` : 'Người dùng KHÔNG cung cấp căn cứ pháp lý => để mảng can_cu rỗng [].'}
+${input.can_cu_phap_ly ? `Căn cứ pháp lý do người dùng cung cấp:\n${input.can_cu_phap_ly}\n=> Hãy sử dụng các căn cứ này và bổ sung thêm các căn cứ mới nhất có liên quan (nếu cần thiết).` : 'Người dùng chưa cung cấp căn cứ pháp lý => BẠN PHẢI TỰ ĐỘNG TÌM VÀ BỔ SUNG các căn cứ (Luật, Nghị định, Thông tư...) mới nhất, phù hợp nhất với chủ đề văn bản.'}
 
 ${input.tai_lieu_tham_khao ? `Tài liệu tham khảo / Số liệu nguồn:\n${input.tai_lieu_tham_khao}\n=> Hãy trích xuất số liệu, thông tin quan trọng từ tài liệu này để đưa vào nội dung văn bản.` : ''}
 
@@ -541,6 +547,11 @@ export async function convertDocumentWithAI(sourceText: string, targetType: stri
 Nhiệm vụ của bạn là nhận vào văn bản nguồn và chuyển đổi nó sang định dạng văn bản đích yêu cầu (Ví dụ: Biên bản họp sang Thông báo kết luận).
 Yêu cầu duy trì tính chính xác của thông tin, số liệu, danh sách đại biểu và các ý kiến kết luận của chủ trì cuộc họp.
 Sử dụng đúng văn phong chuẩn của loại văn bản đích. Không bịa đặt thêm thông tin mới không có trong nguồn.
+
+QUY TẮC BẮT BUỘC:
+1. BẮT BUỘC CHỈ SINH PHẦN NỘI DUNG CHÍNH CỦA VĂN BẢN (không sinh Quốc hiệu, Tiêu ngữ, Tên cơ quan, Chữ ký, Nơi nhận).
+2. BẮT BUỘC CHỈ TRẢ VỀ PLAIN TEXT. TUYỆT ĐỐI KHÔNG DÙNG MARKDOWN (như **, *, #, v.v.). TUYỆT ĐỐI KHÔNG DÙNG HTML.
+3. KHÔNG kèm theo lời chào, lời dẫn (như "Đây là bản chuyển đổi...", "Dưới đây là...").
 
 ${ND30_KNOWLEDGE}`;
 

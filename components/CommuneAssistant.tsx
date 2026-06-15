@@ -17,6 +17,7 @@ interface AssistantJob {
   metricsLabel: string;
   placeholderMetrics: string;
   defaultTopic: string;
+  group: 'UBND' | 'BCHQS';
 }
 
 export default function CommuneAssistant({ apiSettings, onGenerateDoc }: CommuneAssistantProps) {
@@ -25,86 +26,67 @@ export default function CommuneAssistant({ apiSettings, onGenerateDoc }: Commune
   const [loading, setLoading] = useState<boolean>(false);
 
   const jobs: AssistantJob[] = [
+    // === THAM MƯU UBND XÃ ===
     { 
-      id: 'bc_thang', 
-      name: 'Báo cáo công tác tháng', 
-      loai_vb: 'bao_cao', 
-      icon: 'calendar_month',
-      metricsLabel: 'Các kết quả nổi bật trong tháng',
-      placeholderMetrics: 'VD: Tiếp nhận 120 hồ sơ tư pháp, dọn vệ sinh 3 tuyến đường thôn, thu ngân sách đạt 12 triệu...',
-      defaultTopic: 'Báo cáo kết quả công tác hoạt động tháng'
-    },
-    { 
-      id: 'bc_quy', 
-      name: 'Báo cáo công tác quý', 
-      loai_vb: 'bao_cao', 
-      icon: 'date_range',
-      metricsLabel: 'Các chỉ tiêu và số liệu đạt được trong quý',
-      placeholderMetrics: 'VD: Hoàn thành tiêm chủng cho 80 trẻ em, giải quyết 98% hồ sơ đúng hạn, kết nạp 2 đảng viên mới...',
-      defaultTopic: 'Báo cáo tình hình thực hiện nhiệm vụ quý'
-    },
-    { 
-      id: 'bc_6thang', 
-      name: 'Báo cáo 6 tháng đầu năm', 
-      loai_vb: 'bao_cao', 
-      icon: 'analytics',
-      metricsLabel: 'Số liệu sơ kết kinh tế, văn hóa xã hội 6 tháng',
-      placeholderMetrics: 'VD: Năng suất lúa đạt 5.5 tấn/ha, giải ngân vốn đầu tư công đạt 45%, quốc phòng giữ vững ổn định...',
-      defaultTopic: 'Báo cáo tình hình phát triển kinh tế - xã hội 6 tháng đầu năm'
-    },
-    { 
-      id: 'bc_nam', 
-      name: 'Báo cáo tổng kết năm', 
-      loai_vb: 'bao_cao', 
-      icon: 'summarize',
-      metricsLabel: 'Số liệu tổng kết toàn diện cả năm',
-      placeholderMetrics: 'VD: Đạt 15/15 chỉ tiêu tỉnh giao, xóa 5 nhà tạm, tỷ lệ hộ nghèo giảm 2%, hoàn thành chỉ tiêu tuyển quân...',
-      defaultTopic: 'Báo cáo tổng kết phát triển kinh tế - xã hội và quốc phòng an ninh năm'
-    },
-    { 
-      id: 'ctr_tuan', 
-      name: 'Chương trình công tác tuần', 
-      loai_vb: 'chuong_trinh', 
-      icon: 'view_week',
-      metricsLabel: 'Lịch họp và các buổi làm việc chính',
-      placeholderMetrics: 'VD: Thứ Hai họp giao ban UBND; Thứ Tư kiểm tra nương chè Lô Lô Chải; Thứ Sáu tiếp công dân định kỳ...',
-      defaultTopic: 'Chương trình công tác tuần của Ủy ban nhân dân xã'
-    },
-    { 
-      id: 'ctr_thang', 
-      name: 'Chương trình công tác tháng', 
-      loai_vb: 'chuong_trinh', 
-      icon: 'calendar_view_month',
-      metricsLabel: 'Các nhiệm vụ trọng tâm của tháng tới',
-      placeholderMetrics: 'VD: Tập trung thu hoạch lúa chiêm xuân; Tổ chức diễn tập phòng cháy chữa cháy rừng; Tiếp tục nâng cấp bộ phận Một cửa...',
-      defaultTopic: 'Chương trình công tác tháng của Ủy ban nhân dân xã'
-    },
-    { 
-      id: 'kh_nghi_quyet', 
-      name: 'Kế hoạch thực hiện nghị quyết', 
+      id: 'kh_qs_ubnd', 
+      name: 'Kế hoạch QP, QS địa phương', 
       loai_vb: 'ke_hoach', 
-      icon: 'assignment',
-      metricsLabel: 'Các biện pháp triển khai nghị quyết chuyên đề',
-      placeholderMetrics: 'VD: Phân công Công an xã rà soát các hộ tạm trú; Giao Đoàn thanh niên lắp đặt đèn chiếu sáng các ngõ thôn...',
-      defaultTopic: 'Kế hoạch triển khai thực hiện Nghị quyết chuyên đề của Đảng ủy xã'
+      icon: 'military_tech',
+      metricsLabel: 'Các chỉ tiêu quốc phòng, quân sự trọng tâm',
+      placeholderMetrics: 'VD: Hoàn thành 100% chỉ tiêu giao quân, huấn luyện 100% quân số...',
+      defaultTopic: 'Kế hoạch công tác quốc phòng, quân sự địa phương năm',
+      group: 'UBND'
     },
     { 
-      id: 'bc_dxs', 
-      name: 'Báo cáo chuyển đổi số cấp xã', 
+      id: 'bc_qs_ubnd', 
+      name: 'Báo cáo công tác QP, QS', 
       loai_vb: 'bao_cao', 
-      icon: 'devices',
-      metricsLabel: 'Các thành tích, tỷ lệ hồ sơ trực tuyến',
-      placeholderMetrics: 'VD: Tỷ lệ dịch vụ công trực tuyến đạt 80%; Phủ sóng wifi miễn phí tại 5 nhà văn hóa thôn; 100% cán bộ ký số...',
-      defaultTopic: 'Báo cáo kết quả thực hiện công tác Chuyển đổi số cấp xã năm 2026'
+      icon: 'shield',
+      metricsLabel: 'Kết quả thực hiện công tác quốc phòng, quân sự',
+      placeholderMetrics: 'VD: Tuyển quân đạt 15 thanh niên, an ninh chính trị ổn định...',
+      defaultTopic: 'Báo cáo kết quả công tác quốc phòng, quân sự địa phương',
+      group: 'UBND'
     },
     { 
-      id: 'bc_cchc', 
-      name: 'Báo cáo cải cách hành chính (CCHC)', 
+      id: 'qd_tuyen_quan', 
+      name: 'Quyết định giao chỉ tiêu nhập ngũ', 
+      loai_vb: 'quyet_dinh', 
+      icon: 'group_add',
+      metricsLabel: 'Chỉ tiêu tuyển quân chi tiết',
+      placeholderMetrics: 'VD: Giao thôn Nhữ Khê 3 công dân, thôn 2 là 2 công dân...',
+      defaultTopic: 'Quyết định về việc giao chỉ tiêu gọi công dân nhập ngũ năm',
+      group: 'UBND'
+    },
+    // === THAM MƯU CHỈ HUY TRƯỞNG ===
+    { 
+      id: 'ctr_tuan_bchqs', 
+      name: 'Chương trình công tác tuần BCHQS', 
+      loai_vb: 'chuong_trinh', 
+      icon: 'event',
+      metricsLabel: 'Lịch làm việc và huấn luyện tuần',
+      placeholderMetrics: 'VD: Thứ 2 giao ban BCHQS; Thứ 3-5 huấn luyện dân quân...',
+      defaultTopic: 'Chương trình công tác tuần của Ban Chỉ huy quân sự xã',
+      group: 'BCHQS'
+    },
+    { 
+      id: 'bc_huan_luyen', 
+      name: 'Báo cáo kết quả huấn luyện', 
       loai_vb: 'bao_cao', 
-      icon: 'badge',
-      metricsLabel: 'Số liệu tiếp nhận, xử lý Một cửa, đo lường hài lòng',
-      placeholderMetrics: 'VD: Tiếp nhận 600 hồ sơ, giải quyết đúng hạn 99%; Chỉ số hài lòng của người dân đạt 95%; Rút ngắn 2 ngày giải quyết đất đai...',
-      defaultTopic: 'Báo cáo kết quả thực hiện công tác Cải cách hành chính năm 2026'
+      icon: 'fitness_center',
+      metricsLabel: 'Kết quả kiểm tra huấn luyện dân quân',
+      placeholderMetrics: 'VD: 100% đạt yêu cầu, 75% khá giỏi, đảm bảo an toàn tuyệt đối...',
+      defaultTopic: 'Báo cáo kết quả công tác huấn luyện dân quân tự vệ năm',
+      group: 'BCHQS'
+    },
+    { 
+      id: 'kh_dqtv', 
+      name: 'Kế hoạch công tác DQTV', 
+      loai_vb: 'ke_hoach', 
+      icon: 'security',
+      metricsLabel: 'Mục tiêu, nhiệm vụ xây dựng lực lượng DQTV',
+      placeholderMetrics: 'VD: Biên chế 1 trung đội cơ động, 3 tiểu đội tại chỗ, trực sẵn sàng chiến đấu...',
+      defaultTopic: 'Kế hoạch công tác dân quân tự vệ năm',
+      group: 'BCHQS'
     }
   ];
 
@@ -117,14 +99,15 @@ export default function CommuneAssistant({ apiSettings, onGenerateDoc }: Commune
     try {
       const currentYear = new Date().getFullYear();
       const topic = `${selectedJob.defaultTopic} ${selectedJob.id.includes('tuan') ? 'tuần này' : selectedJob.id.includes('thang') ? 'này' : currentYear}`;
+      const isUBND = selectedJob.group === 'UBND';
       
       const aiResult = await generateDocumentWithAI(
         {
           loai_van_ban: selectedJob.loai_vb,
           chu_de: topic,
-          muc_dich: `Đánh giá tiến độ, tổng kết chỉ tiêu công tác và định hướng nhiệm vụ phối hợp hành chính trên địa bàn xã.`,
-          doi_tuong: `Các ban ngành đoàn thể, công chức chuyên môn và Ban chỉ sự các thôn bản.`,
-          can_cu: `Quyết định chương trình công tác của UBND tỉnh và Nghị quyết Đảng ủy xã năm ${currentYear}.`,
+          muc_dich: `Tham mưu cho ${isUBND ? 'UBND xã' : 'Chỉ huy trưởng BCHQS xã'} trong công tác lãnh đạo, chỉ đạo nhiệm vụ quân sự, quốc phòng địa phương.`,
+          doi_tuong: `Các ban ngành đoàn thể, thôn bản, và lực lượng vũ trang địa phương.`,
+          can_cu: `Luật Dân quân tự vệ; Luật Nghĩa vụ quân sự; Nghị quyết của Đảng ủy xã năm ${currentYear}.`,
           yeu_cau: `Số liệu báo cáo thực tế: ${metricsText || '[Không bổ sung số liệu]'}`
         },
         apiSettings.geminiKey || apiSettings.openaiKey || undefined,
@@ -133,18 +116,19 @@ export default function CommuneAssistant({ apiSettings, onGenerateDoc }: Commune
 
       const newDoc: DocTemplate = {
         id: selectedJob.loai_vb,
-        name: selectedJob.loai_vb === 'bao_cao' ? 'Báo cáo' : selectedJob.loai_vb === 'chuong_trinh' ? 'Chương trình công tác' : 'Kế hoạch',
-        code: selectedJob.loai_vb === 'bao_cao' ? 'BC' : selectedJob.loai_vb === 'chuong_trinh' ? 'CTr' : 'KH',
+        name: selectedJob.loai_vb === 'bao_cao' ? 'Báo cáo' : selectedJob.loai_vb === 'chuong_trinh' ? 'Chương trình công tác' : selectedJob.loai_vb === 'quyet_dinh' ? 'Quyết định' : 'Kế hoạch',
+        code: selectedJob.loai_vb === 'bao_cao' ? 'BC' : selectedJob.loai_vb === 'chuong_trinh' ? 'CTr' : selectedJob.loai_vb === 'quyet_dinh' ? 'QĐ' : 'KH',
         description: `Sinh tự động chuyên đề ${selectedJob.name}`,
-        co_quan_ban_hanh: apiSettings.co_quan_ban_hanh || 'ỦY BAN NHÂN DÂN XÃ LŨNG CÚ',
-        so_ky_hieu: `Số:      /${selectedJob.loai_vb === 'bao_cao' ? 'BC' : selectedJob.loai_vb === 'chuong_trinh' ? 'CTr' : 'KH'}-UBND`,
-        dia_danh: apiSettings.dia_danh || 'Lũng Cú',
-        trich_yeu: (selectedJob.loai_vb === 'bao_cao' ? 'Báo cáo ' : selectedJob.loai_vb === 'chuong_trinh' ? 'Chương trình ' : 'Kế hoạch ') + topic,
+        co_quan_chu_quan: isUBND ? '' : 'ỦY BAN NHÂN DÂN XÃ NHỮ KHÊ',
+        co_quan_ban_hanh: isUBND ? 'ỦY BAN NHÂN DÂN XÃ NHỮ KHÊ' : 'BAN CHỈ HUY QUÂN SỰ',
+        so_ky_hieu: `Số:      /${selectedJob.loai_vb === 'bao_cao' ? 'BC' : selectedJob.loai_vb === 'chuong_trinh' ? 'CTr' : selectedJob.loai_vb === 'quyet_dinh' ? 'QĐ' : 'KH'}-${isUBND ? 'UBND' : 'BCH'}`,
+        dia_danh: apiSettings.dia_danh || 'Nhữ Khê',
+        trich_yeu: (selectedJob.loai_vb === 'bao_cao' ? 'Báo cáo ' : selectedJob.loai_vb === 'chuong_trinh' ? 'Chương trình ' : selectedJob.loai_vb === 'quyet_dinh' ? 'Về việc ' : 'Kế hoạch ') + topic,
         noi_dung: aiResult,
-        noi_nhan: ['Đảng ủy, HĐND xã (để b/c);', 'Ủy viên UBND xã;', 'Lưu: VT.'],
-        quyen_han_ky: apiSettings.quyen_han_ky || 'TM. ỦY BAN NHÂN DÂN',
-        chuc_vu_ky: apiSettings.chuc_vu_ky || 'CHỦ TỊCH',
-        nguoi_ky: apiSettings.nguoi_ky || 'Nguyễn Văn Chiến'
+        noi_nhan: isUBND ? ['Bộ CHQS tỉnh (để b/c);', 'Đảng ủy, HĐND xã (để b/c);', 'Lưu: VT, BCHQS.'] : ['Chủ tịch UBND xã (để b/c);', 'Bộ CHQS tỉnh (để b/c);', 'Lưu: VT.'],
+        quyen_han_ky: isUBND ? 'TM. ỦY BAN NHÂN DÂN' : '',
+        chuc_vu_ky: isUBND ? 'CHỦ TỊCH' : 'CHỈ HUY TRƯỞNG',
+        nguoi_ky: isUBND ? (apiSettings.nguoi_ky || 'Nguyễn Văn Chiến') : 'Đặng Thanh Tuyền'
       };
 
       onGenerateDoc(newDoc);
@@ -158,36 +142,73 @@ export default function CommuneAssistant({ apiSettings, onGenerateDoc }: Commune
     }
   };
 
+  const ubndJobs = jobs.filter(j => j.group === 'UBND');
+  const bchqsJobs = jobs.filter(j => j.group === 'BCHQS');
+
   return (
     <div className="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm flex flex-col gap-6">
-      <div className="flex items-center gap-2.5 text-blue-600">
-        <span className="material-icons-round text-2xl">gavel</span>
-        <h2 className="text-lg font-bold">Trợ lý AI chuyên trách cho cán bộ chính quyền cấp xã</h2>
+      <div className="flex items-center gap-2.5 text-blue-700">
+        <span className="material-icons-round text-2xl">military_tech</span>
+        <h2 className="text-lg font-bold">Trợ lý AI chuyên trách BCHQS Xã Nhữ Khê</h2>
       </div>
       <p className="text-slate-500 text-xs leading-relaxed -mt-4">
-        Hệ thống tự động hóa lập biểu và viết báo cáo chuyên đề cho Ủy ban nhân dân và Đảng ủy xã. Hãy chọn một nghiệp vụ và bổ sung số liệu thực tế nhanh.
+        Hệ thống tự động hóa lập biểu, viết báo cáo chuyên đề tham mưu cho UBND xã và Ban Chỉ huy quân sự xã.
       </p>
 
-      {/* Grid of Jobs */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {jobs.map(job => (
-          <button
-            key={job.id}
-            onClick={() => {
-              setSelectedJob(job);
-              setMetricsText('');
-            }}
-            className="p-5 rounded-2xl border border-slate-100 hover:border-blue-200 bg-slate-50/50 hover:bg-blue-50/10 text-left flex gap-4 items-start transition-all"
-          >
-            <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-              <span className="material-icons-round text-lg">{job.icon}</span>
-            </div>
-            <div>
-              <h4 className="font-bold text-sm text-slate-800">{job.name}</h4>
-              <p className="text-[11px] text-slate-400 mt-0.5">Sinh file {job.loai_vb === 'bao_cao' ? 'Báo cáo' : job.loai_vb === 'chuong_trinh' ? 'Chương trình' : 'Kế hoạch'} chuẩn NĐ30</p>
-            </div>
-          </button>
-        ))}
+      {/* THAM MƯU UBND XÃ */}
+      <div>
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-1.5 h-4 bg-emerald-500 rounded-full"></div>
+          <h3 className="font-bold text-sm text-slate-800 uppercase tracking-wide">Tham mưu cho UBND Xã</h3>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {ubndJobs.map(job => (
+            <button
+              key={job.id}
+              onClick={() => {
+                setSelectedJob(job);
+                setMetricsText('');
+              }}
+              className="p-4 rounded-2xl border border-slate-100 hover:border-emerald-200 bg-emerald-50/30 hover:bg-emerald-50 text-left flex gap-4 items-start transition-all group"
+            >
+              <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                <span className="material-icons-round text-lg">{job.icon}</span>
+              </div>
+              <div>
+                <h4 className="font-bold text-sm text-slate-800">{job.name}</h4>
+                <p className="text-[11px] text-slate-500 mt-0.5">Sinh file {job.loai_vb === 'bao_cao' ? 'Báo cáo' : job.loai_vb === 'chuong_trinh' ? 'Chương trình' : job.loai_vb === 'quyet_dinh' ? 'Quyết định' : 'Kế hoạch'}</p>
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* THAM MƯU CHỈ HUY TRƯỞNG */}
+      <div className="mt-2">
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-1.5 h-4 bg-indigo-500 rounded-full"></div>
+          <h3 className="font-bold text-sm text-slate-800 uppercase tracking-wide">Tham mưu Chỉ huy trưởng BCHQS</h3>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {bchqsJobs.map(job => (
+            <button
+              key={job.id}
+              onClick={() => {
+                setSelectedJob(job);
+                setMetricsText('');
+              }}
+              className="p-4 rounded-2xl border border-slate-100 hover:border-indigo-200 bg-indigo-50/30 hover:bg-indigo-50 text-left flex gap-4 items-start transition-all group"
+            >
+              <div className="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                <span className="material-icons-round text-lg">{job.icon}</span>
+              </div>
+              <div>
+                <h4 className="font-bold text-sm text-slate-800">{job.name}</h4>
+                <p className="text-[11px] text-slate-500 mt-0.5">Sinh file {job.loai_vb === 'bao_cao' ? 'Báo cáo' : job.loai_vb === 'chuong_trinh' ? 'Chương trình' : 'Kế hoạch'}</p>
+              </div>
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* PARAMETERS CONFIG MODAL */}
@@ -242,7 +263,7 @@ export default function CommuneAssistant({ apiSettings, onGenerateDoc }: Commune
                   <span className={`material-icons-round text-sm ${loading ? 'animate-spin' : ''}`}>
                     {loading ? 'autorenew' : 'auto_awesome'}
                   </span>
-                  <span>{loading ? 'AI đang viết...' : 'Bắt đầu sinh báo cáo'}</span>
+                  <span>{loading ? 'AI đang viết...' : 'Bắt đầu sinh văn bản'}</span>
                 </button>
               </div>
             </form>
