@@ -107,7 +107,7 @@ export default function CommuneAssistant({ apiSettings, onGenerateDoc }: Commune
           chu_de: topic,
           muc_dich: `Tham mưu cho ${isUBND ? 'UBND xã' : 'Chỉ huy trưởng BCHQS xã'} trong công tác lãnh đạo, chỉ đạo nhiệm vụ quân sự, quốc phòng địa phương.`,
           doi_tuong: `Các ban ngành đoàn thể, thôn bản, và lực lượng vũ trang địa phương.`,
-          can_cu: `Luật Dân quân tự vệ; Luật Nghĩa vụ quân sự; Nghị quyết của Đảng ủy xã năm ${currentYear}.`,
+          can_cu: `Luật Dân quân tự vệ ngày 25 tháng 11 năm 2025; Luật Nghĩa vụ quân sự ngày 25 tháng 11 năm 2025; Luật Tổ chức chính quyền địa phương ngày 20 tháng 6 năm 2025; Nghị quyết của Đảng ủy xã năm ${currentYear}.`,
           yeu_cau: `Số liệu báo cáo thực tế: ${metricsText || '[Không bổ sung số liệu]'}`
         },
         apiSettings.geminiKey || apiSettings.openaiKey || undefined,

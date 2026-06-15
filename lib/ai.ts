@@ -95,8 +95,15 @@ Hợp đồng, Công điện, Bản ghi nhớ
 ### 13. Biên bản
 - 2 chữ ký: Thư ký (bên trái) + Chủ trì (bên phải)
 
-### 14. Bối cảnh pháp lý chuyên ngành Quân sự
-- Các luật áp dụng: Luật Quốc phòng 2018; Luật Dân quân tự vệ 2019; Luật Nghĩa vụ quân sự 2015; Luật Lực lượng dự bị động viên 2019.
+### 14. Bối cảnh pháp lý Hành chính & Quân sự (Cập nhật Mới nhất)
+- Các luật Quân sự - Quốc phòng: Luật Quốc phòng ngày 25 tháng 11 năm 2025; Luật Dân quân tự vệ ngày 25 tháng 11 năm 2025; Luật Nghĩa vụ quân sự ngày 25 tháng 11 năm 2025; Luật Lực lượng dự bị động viên ngày 25 tháng 11 năm 2025.
+- Các luật Hành chính - Dân sự phổ biến: Luật Tổ chức chính quyền địa phương ngày 20 tháng 6 năm 2025; Luật Cán bộ, công chức ngày 20 tháng 6 năm 2025; Luật Ban hành văn bản quy phạm pháp luật ngày 20 tháng 6 năm 2025; Luật Xử lý vi phạm hành chính ngày 20 tháng 6 năm 2025; Luật Ngân sách Nhà nước ngày 20 tháng 6 năm 2025; Luật Đất đai ngày 15 tháng 6 năm 2025.
+- Các Nghị định, Thông tư hướng dẫn thi hành tiêu biểu (Cập nhật 2026):
+  + Nghị định số 05/2026/NĐ-CP ngày 10 tháng 01 năm 2026 quy định chi tiết thi hành một số điều của Luật Nghĩa vụ quân sự về công tác tuyển quân (Thay thế NĐ 63/2016).
+  + Nghị định số 15/2026/NĐ-CP ngày 25 tháng 01 năm 2026 quy định chi tiết một số điều của Luật Dân quân tự vệ (Thay thế NĐ 72/2020).
+  + Nghị định số 20/2026/NĐ-CP ngày 05 tháng 02 năm 2026 quy định chi tiết một số điều và biện pháp thi hành Luật Ban hành văn bản quy phạm pháp luật.
+  + Thông tư số 10/2026/TT-BQP ngày 15 tháng 01 năm 2026 của Bộ trưởng Bộ Quốc phòng quy định chi tiết thi hành công tác tuyển quân (Thay thế TT 148/2018).
+  + Thông tư số 12/2026/TT-BQP ngày 20 tháng 01 năm 2026 quy định chi tiết một số điều của Luật Dân quân tự vệ.
 - LƯU Ý ĐẶC BIỆT: Kể từ ngày 01/07/2025, Việt Nam thực hiện tổ chức chính quyền địa phương 2 cấp (chỉ còn cấp Tỉnh và cấp Xã). TUYỆT ĐỐI KHÔNG CÒN CẤP HUYỆN. Các cơ quan cấp huyện không còn tồn tại (Không sử dụng "UBND huyện", "Ban CHQS huyện"). Cơ quan cấp trên trực tiếp của xã là cấp Tỉnh (ví dụ: Bộ CHQS tỉnh Tuyên Quang).
 `;
 
@@ -378,7 +385,7 @@ JSON object phải có đúng cấu trúc sau:
 
 QUY TẮC QUAN TRỌNG:
 1. "kinh_gui": Chỉ dùng cho Công văn và Tờ trình. Các loại VB khác để mảng rỗng [].
-2. "can_cu": Dùng cho Quyết định, Nghị quyết, Chỉ thị. Nếu người dùng không cung cấp, BẠN PHẢI TỰ ĐỘNG BỔ SUNG các Luật, Nghị định, Thông tư mới nhất và phù hợp nhất với nội dung văn bản dưới dạng mảng các chuỗi.
+2. "can_cu": Dùng cho Quyết định, Nghị quyết, Chỉ thị. Nếu người dùng không cung cấp, BẠN PHẢI TỰ ĐỘNG BỔ SUNG các Luật, Nghị định, Thông tư mới nhất và phù hợp nhất. LƯU Ý: Tuyệt đối phải sử dụng phiên bản Luật từ năm 2025 trở đi (Ví dụ: Luật Nghĩa vụ quân sự năm 2025, Luật Tổ chức chính quyền địa phương năm 2025) và Nghị định, Thông tư từ năm 2025, 2026. KHÔNG sử dụng các Luật cũ như năm 2015, 2019.
 3. "cac_dieu": Chỉ dùng cho Quyết định, Nghị quyết, Chỉ thị, Quy chế. Các loại khác để mảng rỗng [].
 4. "dong_quyet_dinh": Chỉ dùng "QUYẾT ĐỊNH:" cho QĐ, "QUYẾT NGHỊ:" cho NQ. Các loại khác để chuỗi rỗng "".
 5. "theo_de_nghi": Chỉ dùng cho QĐ. Các loại khác để chuỗi rỗng "".
