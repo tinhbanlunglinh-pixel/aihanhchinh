@@ -217,7 +217,7 @@ export default function Dashboard() {
               {user ? user.name.charAt(0) : 'CB'}
             </div>
             <span className="hidden sm:inline text-xs font-semibold text-slate-600">
-              {user ? `${user.name} - ${user.role}` : 'Xã Nhữ Khê'}
+              {user ? user.name : 'Đặng Thanh Tuyền'}
             </span>
           </div>
         </header>

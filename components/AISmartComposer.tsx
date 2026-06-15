@@ -39,6 +39,8 @@ export default function AISmartComposer({ apiSettings, onDocumentReady }: AISmar
     tai_lieu_tham_khao: '',
   });
 
+  const [nhomThamMuu, setNhomThamMuu] = useState<'UBND' | 'BCHQS'>('UBND');
+
   const handleNextStep = () => {
     setInputs(prev => ({ ...prev, loai_van_ban: selectedType }));
     setStep(2);
@@ -55,15 +57,18 @@ export default function AISmartComposer({ apiSettings, onDocumentReady }: AISmar
     setIsGenerating(true);
 
     try {
-      // Use config from settings
+      const isUBND = nhomThamMuu === 'UBND';
+
+      // Use config from settings but override based on nhomThamMuu
       const finalInputs: SmartComposeInput = {
         ...inputs,
-        co_quan_chu_quan: apiSettings.co_quan_chu_quan,
-        co_quan_ban_hanh: apiSettings.co_quan_ban_hanh,
+        co_quan_chu_quan: isUBND ? '' : apiSettings.co_quan_chu_quan,
+        co_quan_ban_hanh: isUBND ? 'ỦY BAN NHÂN DÂN XÃ NHỮ KHÊ' : 'BAN CHỈ HUY QUÂN SỰ',
         dia_danh: apiSettings.dia_danh,
-        nguoi_ky: apiSettings.nguoi_ky,
-        chuc_vu_ky: apiSettings.chuc_vu_ky,
-        quyen_han_ky: apiSettings.quyen_han_ky,
+        nguoi_ky: isUBND ? apiSettings.nguoi_ky : 'Đặng Thanh Tuyền',
+        chuc_vu_ky: isUBND ? 'CHỦ TỊCH' : 'CHỈ HUY TRƯỞNG',
+        quyen_han_ky: isUBND ? 'TM. ỦY BAN NHÂN DÂN' : '',
+        mo_ta: `[Tham mưu cho ${isUBND ? 'UBND xã Nhữ Khê' : 'Chỉ huy trưởng BCHQS xã Nhữ Khê'}] ${inputs.mo_ta}`
       };
 
       const doc = await generateFullDocumentWithAI(
@@ -82,7 +87,7 @@ export default function AISmartComposer({ apiSettings, onDocumentReady }: AISmar
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto composer-dark rounded-3xl p-8 shadow-2xl border border-slate-700 min-h-[800px] flex flex-col relative overflow-hidden">
+    <div className="w-full max-w-6xl mx-auto composer-light rounded-3xl p-8 shadow-2xl border border-blue-100 min-h-[800px] flex flex-col relative overflow-hidden">
       {/* Background decorations */}
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-indigo-500/10 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
       <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-purple-500/10 rounded-full blur-[120px] translate-y-1/3 -translate-x-1/4 pointer-events-none"></div>
@@ -107,10 +112,10 @@ export default function AISmartComposer({ apiSettings, onDocumentReady }: AISmar
           </div>
         </div>
         
-        <div className="flex w-[320px] justify-between mt-3 text-sm font-medium text-slate-400">
-          <span className={step >= 1 ? 'text-indigo-300' : ''}>Chọn loại VB</span>
-          <span className={step >= 2 ? 'text-indigo-300' : ''}>Nhập yêu cầu</span>
-          <span className={isGenerating ? 'text-indigo-300' : ''}>AI xử lý</span>
+        <div className="flex w-[320px] justify-between mt-3 text-sm font-medium text-slate-500">
+          <span className={step >= 1 ? 'text-indigo-600' : ''}>Chọn loại VB</span>
+          <span className={step >= 2 ? 'text-indigo-600' : ''}>Nhập yêu cầu</span>
+          <span className={isGenerating ? 'text-indigo-600' : ''}>AI xử lý</span>
         </div>
       </div>
 
@@ -126,8 +131,8 @@ export default function AISmartComposer({ apiSettings, onDocumentReady }: AISmar
       {step === 1 && (
         <div className="flex-1 animate-slide-up relative z-10">
           <div className="text-center mb-8">
-            <h2 className="text-xl font-semibold text-white mb-2">Bạn muốn soạn loại văn bản nào?</h2>
-            <p className="text-slate-400">Chọn một trong các loại văn bản hành chính phổ biến dưới đây</p>
+            <h2 className="text-xl font-semibold text-slate-800 mb-2">Bạn muốn soạn loại văn bản nào?</h2>
+            <p className="text-slate-500">Chọn một trong các loại văn bản hành chính phổ biến dưới đây</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-5">
@@ -138,12 +143,12 @@ export default function AISmartComposer({ apiSettings, onDocumentReady }: AISmar
                 onClick={() => setSelectedType(type.id)}
               >
                 <div className="flex items-start gap-4">
-                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${selectedType === type.id ? 'bg-indigo-500 text-white' : 'bg-slate-800 text-indigo-400'}`}>
+                  <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${selectedType === type.id ? 'bg-indigo-500 text-white' : 'bg-white text-indigo-500 shadow-sm'}`}>
                     <span className="material-icons-round text-2xl">{type.icon}</span>
                   </div>
                   <div>
-                    <h3 className={`font-bold text-lg ${selectedType === type.id ? 'text-white' : 'text-slate-200'}`}>{type.name}</h3>
-                    <p className="text-sm text-slate-400 mt-1 line-clamp-2">{type.desc}</p>
+                    <h3 className={`font-bold text-lg ${selectedType === type.id ? 'text-indigo-700' : 'text-slate-700'}`}>{type.name}</h3>
+                    <p className="text-sm text-slate-500 mt-1 line-clamp-2">{type.desc}</p>
                   </div>
                 </div>
                 {selectedType === type.id && (
@@ -174,25 +179,59 @@ export default function AISmartComposer({ apiSettings, onDocumentReady }: AISmar
             <div className="flex items-center gap-3">
               <button 
                 onClick={() => setStep(1)}
-                className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-slate-700 text-slate-300 transition-colors"
+                className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center hover:bg-slate-50 text-slate-600 transition-colors"
                 title="Quay lại"
               >
                 <span className="material-icons-round">arrow_back</span>
               </button>
-              <h2 className="text-xl font-semibold text-white">
-                Mô tả nội dung <span className="text-indigo-400">{TEN_LOAI_VB[selectedType] || selectedType}</span>
+              <h2 className="text-xl font-semibold text-slate-800">
+                Mô tả nội dung <span className="text-indigo-600">{TEN_LOAI_VB[selectedType] || selectedType}</span>
               </h2>
             </div>
 
-            <div className="glass-panel p-6 flex flex-col gap-5 flex-1">
+            <div className="glass-panel p-6 flex flex-col gap-5 flex-1 shadow-sm">
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2 flex items-center gap-2">
-                  <span className="material-icons-round text-indigo-400 text-sm">edit_note</span>
+                <label className="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
+                  <span className="material-icons-round text-blue-500 text-sm">account_balance</span>
+                  Cơ quan tham mưu (Cơ quan ban hành)
+                </label>
+                <div className="flex gap-4">
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input 
+                      type="radio" 
+                      name="nhomThamMuu" 
+                      value="UBND" 
+                      checked={nhomThamMuu === 'UBND'} 
+                      onChange={() => setNhomThamMuu('UBND')} 
+                      className="w-4 h-4 text-indigo-600 bg-white border-slate-300" 
+                    />
+                    <span className="text-sm text-slate-700">UBND Xã Nhữ Khê</span>
+                  </label>
+                  <label className="flex items-center gap-2 cursor-pointer">
+                    <input 
+                      type="radio" 
+                      name="nhomThamMuu" 
+                      value="BCHQS" 
+                      checked={nhomThamMuu === 'BCHQS'} 
+                      onChange={() => setNhomThamMuu('BCHQS')} 
+                      className="w-4 h-4 text-indigo-600 bg-white border-slate-300" 
+                    />
+                    <span className="text-sm text-slate-700">Ban CHQS Xã Nhữ Khê</span>
+                  </label>
+                </div>
+                <p className="text-xs text-slate-500 mt-2 italic">
+                  {nhomThamMuu === 'UBND' ? 'Mặc định không có cơ quan chủ quản. Nơi nhận: Bộ CHQS tỉnh, Đảng ủy.' : 'Mặc định cơ quan chủ quản là UBND xã. Nơi nhận: Chủ tịch UBND xã, Bộ CHQS tỉnh.'}
+                </p>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
+                  <span className="material-icons-round text-indigo-500 text-sm">edit_note</span>
                   Nội dung chi tiết bạn muốn truyền đạt
-                  <span className="text-red-400">*</span>
+                  <span className="text-red-500">*</span>
                 </label>
                 <textarea 
-                  className="w-full h-40 resize-none"
+                  className="w-full h-32 resize-none"
                   placeholder="Ví dụ: Lên kế hoạch tổ chức tiêm chủng cho trẻ em. Thời gian từ ngày 15/7 đến 20/7. Yêu cầu Trạm y tế chuẩn bị vaccine..."
                   value={inputs.mo_ta}
                   onChange={e => setInputs({...inputs, mo_ta: e.target.value})}
@@ -201,12 +240,12 @@ export default function AISmartComposer({ apiSettings, onDocumentReady }: AISmar
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2 flex items-center gap-2">
-                  <span className="material-icons-round text-emerald-400 text-sm">gavel</span>
+                <label className="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
+                  <span className="material-icons-round text-emerald-500 text-sm">gavel</span>
                   Căn cứ pháp lý (Tùy chọn)
                 </label>
                 <textarea 
-                  className="w-full h-24 resize-none"
+                  className="w-full h-20 resize-none"
                   placeholder="Ví dụ:&#10;Luật Tổ chức chính quyền địa phương năm 2015;&#10;Quyết định số 123/QĐ-UBND ngày 01/01/2026..."
                   value={inputs.can_cu_phap_ly}
                   onChange={e => setInputs({...inputs, can_cu_phap_ly: e.target.value})}
@@ -215,10 +254,37 @@ export default function AISmartComposer({ apiSettings, onDocumentReady }: AISmar
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2 flex items-center gap-2">
-                  <span className="material-icons-round text-amber-400 text-sm">attach_file</span>
-                  Tài liệu tham khảo / Dữ liệu nguồn (Tùy chọn)
-                </label>
+                <div className="flex justify-between items-end mb-2">
+                  <label className="block text-sm font-medium text-slate-700 flex items-center gap-2">
+                    <span className="material-icons-round text-amber-500 text-sm">attach_file</span>
+                    Tài liệu tham khảo / Dữ liệu nguồn (Tùy chọn)
+                  </label>
+                  <label className="cursor-pointer flex items-center gap-1.5 px-3 py-1.5 bg-white shadow-sm hover:bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-600 transition-colors">
+                    <span className="material-icons-round text-[14px]">upload_file</span>
+                    Tải file văn bản (.txt)
+                    <input 
+                      type="file" 
+                      className="hidden" 
+                      accept=".txt,.csv,.md,.log"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onload = (evt) => {
+                            const text = evt.target?.result as string;
+                            if (text) {
+                              setInputs(prev => ({
+                                ...prev,
+                                tai_lieu_tham_khao: prev.tai_lieu_tham_khao ? prev.tai_lieu_tham_khao + '\n\n' + text : text
+                              }));
+                            }
+                          };
+                          reader.readAsText(file);
+                        }
+                      }} 
+                    />
+                  </label>
+                </div>
                 <textarea 
                   className="w-full h-24 resize-none"
                   placeholder="Dán các số liệu báo cáo, danh sách đại biểu, hoặc nội dung từ văn bản cũ để AI trích xuất và đưa vào văn bản mới..."
@@ -229,8 +295,8 @@ export default function AISmartComposer({ apiSettings, onDocumentReady }: AISmar
             </div>
 
             <div className="flex justify-between items-center mt-4">
-              <p className="text-sm text-slate-400">
-                AI sẽ tự động áp dụng thông tin cơ quan, người ký từ <span className="text-indigo-400 font-medium">Cài đặt hệ thống</span>.
+              <p className="text-sm text-slate-500">
+                AI sẽ tự động áp dụng thông tin cơ quan, người ký từ <span className="text-indigo-600 font-medium">Cài đặt hệ thống</span>.
               </p>
               <button 
                 onClick={handleGenerate}
@@ -245,30 +311,30 @@ export default function AISmartComposer({ apiSettings, onDocumentReady }: AISmar
 
           {/* Right Panel - Tips */}
           <div className="w-full lg:w-80 flex flex-col gap-4">
-            <div className="glass-panel p-5">
-              <h3 className="font-bold text-white mb-4 flex items-center gap-2">
-                <span className="material-icons-round text-amber-400">lightbulb</span> Mẹo viết prompt
+            <div className="glass-panel p-5 shadow-sm">
+              <h3 className="font-bold text-slate-800 mb-4 flex items-center gap-2">
+                <span className="material-icons-round text-amber-500">lightbulb</span> Mẹo viết prompt
               </h3>
               
-              <ul className="space-y-4 text-sm text-slate-300">
+              <ul className="space-y-4 text-sm text-slate-600">
                 <li className="flex items-start gap-2">
-                  <span className="material-icons-round text-indigo-400 text-sm mt-0.5">check_circle</span>
+                  <span className="material-icons-round text-indigo-500 text-sm mt-0.5">check_circle</span>
                   <span>Cung cấp rõ <strong>thời gian, địa điểm</strong> và <strong>người phụ trách</strong>.</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="material-icons-round text-indigo-400 text-sm mt-0.5">check_circle</span>
+                  <span className="material-icons-round text-indigo-500 text-sm mt-0.5">check_circle</span>
                   <span>Nếu thiếu thông tin, AI sẽ tự động đánh dấu <code>[Chờ bổ sung]</code> để bạn dễ dàng điền sau.</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <span className="material-icons-round text-indigo-400 text-sm mt-0.5">check_circle</span>
+                  <span className="material-icons-round text-indigo-500 text-sm mt-0.5">check_circle</span>
                   <span>Không cần quan tâm căn lề, in đậm hay dấu chấm phẩy, AI sẽ tự lo định dạng chuẩn NĐ30.</span>
                 </li>
               </ul>
             </div>
 
-            <div className="glass-panel p-5 bg-indigo-500/10 border-indigo-500/20">
-              <h3 className="font-bold text-white mb-3 text-sm">Gợi ý cho {TEN_LOAI_VB[selectedType] || 'loại văn bản này'}:</h3>
-              <p className="text-sm text-indigo-200 italic">
+            <div className="glass-panel p-5 bg-indigo-50/50 border-indigo-100 shadow-sm">
+              <h3 className="font-bold text-slate-800 mb-3 text-sm">Gợi ý cho {TEN_LOAI_VB[selectedType] || 'loại văn bản này'}:</h3>
+              <p className="text-sm text-indigo-700 italic">
                 {selectedType === 'quyet_dinh' && '"Thành lập Ban chỉ đạo phòng chống lụt bão gồm Chủ tịch xã làm Trưởng ban, Trưởng công an xã làm phó ban..."'}
                 {selectedType === 'cong_van' && '"Gửi các thôn bản yêu cầu tổng vệ sinh đường làng ngõ xóm trước ngày 15/8. Giao Đoàn thanh niên phối hợp thực hiện..."'}
                 {selectedType === 'bao_cao' && '"Báo cáo kết quả thu ngân sách quý 3. Tổng thu 1.5 tỷ đồng, đạt 85% kế hoạch. Tồn tại: thu phí rác thải còn chậm..."'}
@@ -284,19 +350,19 @@ export default function AISmartComposer({ apiSettings, onDocumentReady }: AISmar
       {isGenerating && (
         <div className="flex-1 flex flex-col items-center justify-center relative z-10 animate-slide-up">
           <div className="w-24 h-24 mb-8 relative flex items-center justify-center">
-            <div className="absolute inset-0 border-4 border-indigo-500/30 rounded-full"></div>
+            <div className="absolute inset-0 border-4 border-indigo-200 rounded-full"></div>
             <div className="absolute inset-0 border-4 border-indigo-500 rounded-full border-t-transparent animate-spin"></div>
-            <span className="material-icons-round text-4xl text-indigo-400 float-glow">auto_awesome</span>
+            <span className="material-icons-round text-4xl text-indigo-500 float-glow">auto_awesome</span>
           </div>
           
-          <h2 className="text-2xl font-bold text-white mb-3 typewriter-text">Đang phân tích & soạn thảo...</h2>
+          <h2 className="text-2xl font-bold text-slate-800 mb-3 typewriter-text">Đang phân tích & soạn thảo...</h2>
           
-          <div className="flex flex-col items-center gap-2 text-slate-400">
+          <div className="flex flex-col items-center gap-2 text-slate-600">
             <p className="flex items-center gap-2">
-              <span className="material-icons-round text-sm text-emerald-400">check</span> Áp dụng quy tắc thể thức NĐ30
+              <span className="material-icons-round text-sm text-emerald-500">check</span> Áp dụng quy tắc thể thức NĐ30
             </p>
             <p className="flex items-center gap-2">
-              <span className="material-icons-round text-sm text-emerald-400">check</span> Xác định quyền hạn ký & nơi nhận
+              <span className="material-icons-round text-sm text-emerald-500">check</span> Xác định quyền hạn ký & nơi nhận
             </p>
             <p className="flex items-center gap-2 loading-dots">
               Đang hoàn thiện nội dung <span></span><span></span><span></span>

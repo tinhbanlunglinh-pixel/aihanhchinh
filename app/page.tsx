@@ -4,9 +4,9 @@ import Link from 'next/link';
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen bg-[#0f172a] text-white overflow-x-hidden">
+    <div className="flex flex-col min-h-screen bg-slate-50 text-slate-800 overflow-x-hidden">
       {/* HEADER */}
-      <header className="sticky top-0 z-50 backdrop-blur-xl bg-[#0f172a]/80 border-b border-white/5 px-6 lg:px-16 py-4 flex items-center justify-between">
+      <header className="sticky top-0 z-50 backdrop-blur-xl bg-white/80 border-b border-slate-200 px-6 lg:px-16 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <span className="material-icons-round text-indigo-400 text-3xl">description</span>
           <span className="font-extrabold text-xl lg:text-2xl tracking-tight bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
@@ -14,7 +14,7 @@ export default function Home() {
           </span>
         </div>
         <div className="flex items-center gap-4">
-          <Link href="/dashboard" className="hidden sm:inline-flex text-sm font-medium text-slate-400 hover:text-white transition-colors">
+          <Link href="/dashboard" className="hidden sm:inline-flex text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors">
             Tính năng
           </Link>
           <Link href="/login" className="inline-flex items-center gap-1.5 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl text-sm font-semibold shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/40 transition-all active:scale-95">
@@ -33,29 +33,29 @@ export default function Home() {
 
         <div className="relative z-10 max-w-5xl mx-auto">
           {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full text-xs font-semibold uppercase tracking-wider text-indigo-300 mb-8 backdrop-blur-sm">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 shadow-sm rounded-full text-xs font-semibold uppercase tracking-wider text-indigo-600 mb-8 backdrop-blur-sm">
             <span className="material-icons-round text-sm animate-pulse-slow">auto_awesome</span>
             <span>Trợ lý AI soạn văn bản hành chính Việt Nam</span>
           </div>
 
           {/* Title */}
           <h1 className="text-4xl sm:text-5xl lg:text-7xl font-extrabold tracking-tight leading-tight lg:leading-none mb-6">
-            <span className="bg-gradient-to-r from-white via-indigo-200 to-white bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-blue-700 via-indigo-600 to-blue-700 bg-clip-text text-transparent">
               AI Soạn Văn Bản
             </span>
             <br />
-            <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 bg-clip-text text-transparent">
               Hành Chính
             </span>
           </h1>
 
           {/* Subtitle */}
-          <p className="text-lg sm:text-xl lg:text-2xl font-semibold text-indigo-300/90 mb-4">
+          <p className="text-lg sm:text-xl lg:text-2xl font-semibold text-indigo-600/90 mb-4">
             Chuẩn Nghị Định 30/2020/NĐ-CP
           </p>
 
           {/* Description */}
-          <p className="text-base sm:text-lg text-slate-400 max-w-3xl mx-auto leading-relaxed mb-12">
+          <p className="text-base sm:text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed mb-12">
             Chỉ cần chọn loại văn bản và mô tả nội dung — AI sẽ tự động soạn thảo văn bản hành chính đúng chuẩn thể thức Nhà nước
           </p>
 
@@ -81,11 +81,11 @@ export default function Home() {
             { value: 'DOCX', label: 'Xuất file Word', icon: 'download' },
           ].map((stat, i) => (
             <div key={i} className="glass-panel p-6 text-center animate-slide-up" style={{ animationDelay: `${i * 0.15}s` }}>
-              <span className="material-icons-round text-indigo-400 text-2xl mb-2 block">{stat.icon}</span>
-              <div className="text-2xl lg:text-3xl font-extrabold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+              <span className="material-icons-round text-indigo-500 text-2xl mb-2 block">{stat.icon}</span>
+              <div className="text-2xl lg:text-3xl font-extrabold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                 {stat.value}
               </div>
-              <div className="text-xs text-slate-400 mt-1 font-medium">{stat.label}</div>
+              <div className="text-xs text-slate-500 mt-1 font-medium">{stat.label}</div>
             </div>
           ))}
         </div>
@@ -96,46 +96,46 @@ export default function Home() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-3xl lg:text-4xl font-extrabold tracking-tight mb-4">
-              <span className="bg-gradient-to-r from-white to-slate-300 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent">
                 Quy trình 3 bước đơn giản
               </span>
             </h2>
-            <p className="text-slate-400 text-lg">Từ ý tưởng đến văn bản hoàn chỉnh chỉ trong vài phút</p>
+            <p className="text-slate-500 text-lg">Từ ý tưởng đến văn bản hoàn chỉnh chỉ trong vài phút</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Feature 1 */}
-            <div className="glass-panel p-8 hover:bg-white/[0.06] transition-all duration-300 hover:-translate-y-2 group">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500/20 to-purple-500/20 border border-indigo-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <span className="material-icons-round text-indigo-400 text-2xl">checklist</span>
+            <div className="glass-panel p-8 hover:bg-white transition-all duration-300 hover:-translate-y-2 group shadow-sm hover:shadow-md">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-200 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <span className="material-icons-round text-indigo-500 text-2xl">checklist</span>
               </div>
-              <div className="text-xs font-bold text-indigo-400 uppercase tracking-widest mb-2">Bước 1</div>
-              <h3 className="font-bold text-xl mb-3 text-white">Chọn loại văn bản</h3>
-              <p className="text-slate-400 text-sm leading-relaxed">
+              <div className="text-xs font-bold text-indigo-500 uppercase tracking-widest mb-2">Bước 1</div>
+              <h3 className="font-bold text-xl mb-3 text-slate-800">Chọn loại văn bản</h3>
+              <p className="text-slate-600 text-sm leading-relaxed">
                 Lựa chọn 1 trong 24 loại văn bản hành chính: Công văn, Quyết định, Tờ trình, Thông báo, Biên bản, Kế hoạch, Báo cáo và nhiều loại khác.
               </p>
             </div>
 
             {/* Feature 2 */}
-            <div className="glass-panel p-8 hover:bg-white/[0.06] transition-all duration-300 hover:-translate-y-2 group">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <span className="material-icons-round text-purple-400 text-2xl">psychology</span>
+            <div className="glass-panel p-8 hover:bg-white transition-all duration-300 hover:-translate-y-2 group shadow-sm hover:shadow-md">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-500/10 to-pink-500/10 border border-purple-200 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <span className="material-icons-round text-purple-500 text-2xl">psychology</span>
               </div>
-              <div className="text-xs font-bold text-purple-400 uppercase tracking-widest mb-2">Bước 2</div>
-              <h3 className="font-bold text-xl mb-3 text-white">AI tự động soạn</h3>
-              <p className="text-slate-400 text-sm leading-relaxed">
+              <div className="text-xs font-bold text-purple-500 uppercase tracking-widest mb-2">Bước 2</div>
+              <h3 className="font-bold text-xl mb-3 text-slate-800">AI tự động soạn</h3>
+              <p className="text-slate-600 text-sm leading-relaxed">
                 AI phân tích yêu cầu và tự động soạn thảo nội dung văn bản đúng chuẩn thể thức Nghị định 30/2020/NĐ-CP, văn phong hành chính chuẩn mực.
               </p>
             </div>
 
             {/* Feature 3 */}
-            <div className="glass-panel p-8 hover:bg-white/[0.06] transition-all duration-300 hover:-translate-y-2 group">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500/20 to-teal-500/20 border border-emerald-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <span className="material-icons-round text-emerald-400 text-2xl">sim_card_download</span>
+            <div className="glass-panel p-8 hover:bg-white transition-all duration-300 hover:-translate-y-2 group shadow-sm hover:shadow-md">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-500/10 to-teal-500/10 border border-emerald-200 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <span className="material-icons-round text-emerald-500 text-2xl">sim_card_download</span>
               </div>
-              <div className="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-2">Bước 3</div>
-              <h3 className="font-bold text-xl mb-3 text-white">Xuất file Word</h3>
-              <p className="text-slate-400 text-sm leading-relaxed">
+              <div className="text-xs font-bold text-emerald-500 uppercase tracking-widest mb-2">Bước 3</div>
+              <h3 className="font-bold text-xl mb-3 text-slate-800">Xuất file Word</h3>
+              <p className="text-slate-600 text-sm leading-relaxed">
                 Xuất file .docx đạt độ chính xác cao về căn lề (30-20-20-20mm), kiểu chữ Times New Roman, khoảng trống ký tên và đường kẻ gạch chân chuẩn.
               </p>
             </div>
@@ -145,12 +145,12 @@ export default function Home() {
 
       {/* BOTTOM CTA */}
       <section className="px-6 lg:px-16 pb-24">
-        <div className="max-w-3xl mx-auto glass-panel p-12 text-center relative overflow-hidden">
+        <div className="max-w-3xl mx-auto glass-panel p-12 text-center relative overflow-hidden shadow-sm">
           <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/5 via-purple-500/5 to-pink-500/5" />
           <div className="relative z-10">
-            <span className="material-icons-round text-indigo-400 text-5xl mb-4 block float-glow">rocket_launch</span>
-            <h3 className="text-2xl lg:text-3xl font-extrabold mb-4">Sẵn sàng soạn văn bản?</h3>
-            <p className="text-slate-400 mb-8 max-w-lg mx-auto">
+            <span className="material-icons-round text-indigo-500 text-5xl mb-4 block float-glow">rocket_launch</span>
+            <h3 className="text-2xl lg:text-3xl font-extrabold mb-4 text-slate-800">Sẵn sàng soạn văn bản?</h3>
+            <p className="text-slate-600 mb-8 max-w-lg mx-auto">
               Trải nghiệm công cụ soạn thảo văn bản hành chính thông minh nhất, được thiết kế riêng cho cán bộ công chức Việt Nam.
             </p>
             <Link
@@ -166,11 +166,11 @@ export default function Home() {
       </section>
 
       {/* FOOTER */}
-      <footer className="mt-auto px-6 lg:px-16 py-8 border-t border-white/5 text-center text-xs lg:text-sm">
+      <footer className="mt-auto px-6 lg:px-16 py-8 border-t border-slate-200 text-center text-xs lg:text-sm">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <span className="material-icons-round text-indigo-400">description</span>
-            <span className="font-bold text-white">AI Văn Bản 30</span>
+            <span className="material-icons-round text-indigo-500">description</span>
+            <span className="font-bold text-slate-700">AI Văn Bản 30</span>
           </div>
           <p className="text-slate-500">© 2026 AI Văn Bản 30. Thiết kế phục vụ chuyên nghiệp nền Hành chính công vụ Việt Nam.</p>
         </div>

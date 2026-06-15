@@ -805,12 +805,12 @@ export default function DocumentEditor({ data, setData, apiSettings }: DocumentE
                 {(data.id === 'quyet_dinh' || data.id === 'nghi_quyet') && data.can_cu && data.can_cu.length > 0 && (
                   <div className="mb-3 text-[14pt]">
                     {data.can_cu.map((cc, i) => (
-                      <div key={i} className="a4-italic text-justify leading-relaxed" style={{ textIndent: '1.2cm' }}>
+                      <div key={i} className="a4-italic text-justify leading-relaxed" style={{ textIndent: '1.27cm' }}>
                         {formatCanCu(cc, i === data.can_cu!.length - 1)}
                       </div>
                     ))}
                     {data.theo_de_nghi && (
-                      <div className="a4-italic text-justify leading-relaxed mt-1" style={{ textIndent: '1.2cm' }}>
+                      <div className="a4-italic text-justify leading-relaxed mt-1" style={{ textIndent: '1.27cm' }}>
                         {data.theo_de_nghi.endsWith('.') ? data.theo_de_nghi : (data.theo_de_nghi + '.')}
                       </div>
                     )}
@@ -825,18 +825,21 @@ export default function DocumentEditor({ data, setData, apiSettings }: DocumentE
                   className="a4-noi-dung-block outline-none text-[14pt]"
                   contentEditable="true"
                   suppressContentEditableWarning
-                  style={{ textIndent: '1.2cm' }}
                   onBlur={(e) => setLocalNoiDung(e.target.innerText)}
                   onInput={(e) => setData(prev => ({ ...prev, noi_dung: e.currentTarget.innerText }))}
                 >
-                  {localNoiDung || 'Nội dung chính...'}
+                  {(localNoiDung || 'Nội dung chính...').split('\n').map((paragraph, idx) => (
+                    <div key={idx} style={{ textIndent: '1.27cm', textAlign: 'justify', marginBottom: '6pt', minHeight: '1.45em' }}>
+                      {paragraph}
+                    </div>
+                  ))}
                 </div>
 
                 {/* Các Điều khoản (Quyết định / Nghị quyết) */}
                 {(data.id === 'quyet_dinh' || data.id === 'nghi_quyet') && data.cac_dieu && data.cac_dieu.length > 0 && (
                   <div className="a4-cac-dieu-block mt-3">
                     {data.cac_dieu.map((dieu, i) => (
-                      <div key={i} className="text-justify text-[14pt] leading-relaxed mb-2" style={{ textIndent: '1.2cm' }}>
+                      <div key={i} className="text-justify text-[14pt] leading-relaxed mb-2" style={{ textIndent: '1.27cm' }}>
                         <span className="a4-bold">Điều {i+1}. </span>
                         <span>{dieu}</span>
                       </div>
