@@ -412,7 +412,7 @@ export interface SmartComposeInput {
   quyen_han_ky?: string;
 }
 
-function generateMockFullDocument(input: SmartComposeInput): DocTemplate {
+export function generateMockFullDocument(input: SmartComposeInput): DocTemplate {
   const loai = input.loai_van_ban || 'cong_van';
   const tenLoai = TEN_LOAI_VB[loai] || 'Công văn';
   const maLoai = MA_LOAI_VB[loai] || 'CV';

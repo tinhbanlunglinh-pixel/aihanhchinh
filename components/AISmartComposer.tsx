@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ApiSettings, generateFullDocumentWithAI, SmartComposeInput, TEN_LOAI_VB } from '@/lib/ai';
+import { ApiSettings, generateFullDocumentWithAI, SmartComposeInput, TEN_LOAI_VB, generateMockFullDocument } from '@/lib/ai';
 import { DocTemplate } from '@/lib/templateData';
 
 export interface AISmartComposerProps {
@@ -40,6 +40,7 @@ export default function AISmartComposer({ apiSettings, onDocumentReady }: AISmar
   });
 
   const [nhomThamMuu, setNhomThamMuu] = useState<'UBND' | 'BCHQS'>('UBND');
+  const [aiMode, setAiMode] = useState<'tao_moi' | 'hoan_thien'>('tao_moi');
 
   const handleNextStep = () => {
     setInputs(prev => ({ ...prev, loai_van_ban: selectedType }));
@@ -59,7 +60,10 @@ export default function AISmartComposer({ apiSettings, onDocumentReady }: AISmar
     try {
       const isUBND = nhomThamMuu === 'UBND';
 
-      // Use config from settings but override based on nhomThamMuu
+      const moTaPrefix = aiMode === 'tao_moi' 
+        ? '[Chế độ: Tự động sáng tạo nội dung từ chủ đề] Chủ đề: ' 
+        : '[Chế độ: Hoàn thiện văn bản từ nội dung thô] Nội dung gốc: ';
+
       const finalInputs: SmartComposeInput = {
         ...inputs,
         co_quan_chu_quan: isUBND ? '' : apiSettings.co_quan_chu_quan,
@@ -68,7 +72,7 @@ export default function AISmartComposer({ apiSettings, onDocumentReady }: AISmar
         nguoi_ky: isUBND ? apiSettings.nguoi_ky : 'Đặng Thanh Tuyền',
         chuc_vu_ky: isUBND ? 'CHỦ TỊCH' : 'CHỈ HUY TRƯỞNG',
         quyen_han_ky: isUBND ? 'TM. ỦY BAN NHÂN DÂN' : '',
-        mo_ta: `[Tham mưu cho ${isUBND ? 'UBND xã Nhữ Khê' : 'Chỉ huy trưởng BCHQS xã Nhữ Khê'}] ${inputs.mo_ta}`
+        mo_ta: `${moTaPrefix} [Tham mưu cho ${isUBND ? 'UBND xã Nhữ Khê' : 'Chỉ huy trưởng BCHQS xã Nhữ Khê'}] ${inputs.mo_ta}`
       };
 
       const doc = await generateFullDocumentWithAI(
@@ -80,7 +84,22 @@ export default function AISmartComposer({ apiSettings, onDocumentReady }: AISmar
       onDocumentReady(doc);
     } catch (err: any) {
       console.error(err);
-      setError(err.message || 'Có lỗi xảy ra khi tạo văn bản.');
+      // Fallback to mock generation silently or with a mild warning instead of hard blocking
+      alert('API đang quá tải hoặc gặp lỗi. Đang sử dụng chế độ tạo mẫu cơ bản.');
+      
+      const isUBND = nhomThamMuu === 'UBND';
+      const fallbackInputs: SmartComposeInput = {
+        ...inputs,
+        co_quan_chu_quan: isUBND ? '' : apiSettings.co_quan_chu_quan,
+        co_quan_ban_hanh: isUBND ? 'ỦY BAN NHÂN DÂN XÃ NHỮ KHÊ' : 'BAN CHỈ HUY QUÂN SỰ',
+        dia_danh: apiSettings.dia_danh,
+        nguoi_ky: isUBND ? apiSettings.nguoi_ky : 'Đặng Thanh Tuyền',
+        chuc_vu_ky: isUBND ? 'CHỦ TỊCH' : 'CHỈ HUY TRƯỞNG',
+        quyen_han_ky: isUBND ? 'TM. ỦY BAN NHÂN DÂN' : '',
+      };
+      
+      const doc = generateMockFullDocument(fallbackInputs);
+      onDocumentReady(doc);
     } finally {
       setIsGenerating(false);
     }
@@ -226,13 +245,52 @@ export default function AISmartComposer({ apiSettings, onDocumentReady }: AISmar
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
+                  <span className="material-icons-round text-emerald-500 text-sm">psychology</span>
+                  Chế độ AI xử lý
+                </label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <label className={`cursor-pointer flex items-start gap-3 p-3 rounded-xl border ${aiMode === 'tao_moi' ? 'border-indigo-500 bg-indigo-50/50' : 'border-slate-200 bg-white hover:bg-slate-50'} transition-all`}>
+                    <input 
+                      type="radio" 
+                      name="aiMode" 
+                      value="tao_moi" 
+                      checked={aiMode === 'tao_moi'} 
+                      onChange={() => setAiMode('tao_moi')} 
+                      className="mt-1 w-4 h-4 text-indigo-600 bg-white border-slate-300" 
+                    />
+                    <div>
+                      <div className="text-sm font-semibold text-slate-800">Sáng tạo văn bản mới</div>
+                      <div className="text-xs text-slate-500 mt-0.5">Chỉ cần nhập một chủ đề ngắn, AI sẽ tự động nghĩ ra nội dung và cấu trúc đầy đủ.</div>
+                    </div>
+                  </label>
+                  <label className={`cursor-pointer flex items-start gap-3 p-3 rounded-xl border ${aiMode === 'hoan_thien' ? 'border-indigo-500 bg-indigo-50/50' : 'border-slate-200 bg-white hover:bg-slate-50'} transition-all`}>
+                    <input 
+                      type="radio" 
+                      name="aiMode" 
+                      value="hoan_thien" 
+                      checked={aiMode === 'hoan_thien'} 
+                      onChange={() => setAiMode('hoan_thien')} 
+                      className="mt-1 w-4 h-4 text-indigo-600 bg-white border-slate-300" 
+                    />
+                    <div>
+                      <div className="text-sm font-semibold text-slate-800">Hoàn thiện từ bản thô</div>
+                      <div className="text-xs text-slate-500 mt-0.5">Dán dàn ý hoặc văn bản thô của bạn vào, AI sẽ trau chuốt lại văn phong chuẩn nhà nước.</div>
+                    </div>
+                  </label>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
                   <span className="material-icons-round text-indigo-500 text-sm">edit_note</span>
-                  Nội dung chi tiết bạn muốn truyền đạt
+                  {aiMode === 'tao_moi' ? 'Chủ đề / Yêu cầu văn bản' : 'Nội dung thô / Dàn ý cần hoàn thiện'}
                   <span className="text-red-500">*</span>
                 </label>
                 <textarea 
                   className="w-full h-32 resize-none"
-                  placeholder="Ví dụ: Lên kế hoạch tổ chức tiêm chủng cho trẻ em. Thời gian từ ngày 15/7 đến 20/7. Yêu cầu Trạm y tế chuẩn bị vaccine..."
+                  placeholder={aiMode === 'tao_moi' 
+                    ? "Ví dụ: Lên kế hoạch tổ chức tiêm chủng cho trẻ em. Thời gian từ ngày 15/7 đến 20/7..." 
+                    : "Dán nội dung thô của bạn vào đây. Ví dụ: 'Sắp tới 15/7 tiêm chủng trẻ em, cần trạm y tế chuẩn bị vắc xin...'"}
                   value={inputs.mo_ta}
                   onChange={e => setInputs({...inputs, mo_ta: e.target.value})}
                   autoFocus
