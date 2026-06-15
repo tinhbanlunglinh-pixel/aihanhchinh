@@ -820,7 +820,6 @@ export default function DocumentEditor({ data, setData, apiSettings }: DocumentE
                   </div>
                 )}
 
-                {/* Nội dung văn bản (Body text) */}
                 <div
                   className="a4-noi-dung-block outline-none text-[14pt]"
                   contentEditable="true"
@@ -828,11 +827,23 @@ export default function DocumentEditor({ data, setData, apiSettings }: DocumentE
                   onBlur={(e) => setLocalNoiDung(e.target.innerText)}
                   onInput={(e) => setData(prev => ({ ...prev, noi_dung: e.currentTarget.innerText }))}
                 >
-                  {(localNoiDung || 'Nội dung chính...').split('\n').map((paragraph, idx) => (
-                    <div key={idx} style={{ textIndent: '1.27cm', textAlign: 'justify', marginBottom: '6pt', minHeight: '1.45em' }}>
-                      {paragraph}
-                    </div>
-                  ))}
+                  {(localNoiDung || 'Nội dung chính...')
+                    .replace(/\n{2,}/g, '\n') // Remove excessive empty lines
+                    .split('\n')
+                    .filter(p => p.trim() !== '') // Remove completely empty paragraphs
+                    .map((paragraph, idx) => {
+                      const isList = paragraph.trim().startsWith('-') || paragraph.trim().startsWith('+');
+                      return (
+                        <div key={idx} style={{ 
+                          textIndent: isList ? '0' : '1.27cm', 
+                          paddingLeft: isList ? '1.27cm' : '0',
+                          textAlign: 'justify', 
+                          marginBottom: '6pt' 
+                        }}>
+                          {paragraph}
+                        </div>
+                      );
+                  })}
                 </div>
 
                 {/* Các Điều khoản (Quyết định / Nghị quyết) */}
