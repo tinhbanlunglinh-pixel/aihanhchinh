@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { DocTemplate } from '@/lib/templateData';
+import { getHistory, HistoryItem } from '@/lib/history';
 
 export interface DocumentManagerProps {
   currentDoc: DocTemplate;
@@ -31,7 +32,15 @@ export default function DocumentManager({ currentDoc, onSelectDoc }: DocumentMan
     return [];
   });
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [activePane, setActivePane] = useState<'active' | 'trash'>('active');
+  const [activePane, setActivePane] = useState<'active' | 'trash' | 'history'>('active');
+  const [historyDocs, setHistoryDocs] = useState<HistoryItem[]>([]);
+
+  // Load history on mount
+  React.useEffect(() => {
+    if (activePane === 'history') {
+      setHistoryDocs(getHistory());
+    }
+  }, [activePane]);
 
   // Save current document to database
   const handleSaveCurrentDoc = () => {
@@ -121,6 +130,16 @@ export default function DocumentManager({ currentDoc, onSelectDoc }: DocumentMan
           >
             Thùng rác ({savedDocs.filter(d => d.isDeleted).length})
           </button>
+          <button
+            onClick={() => setActivePane('history')}
+            className={`px-4 py-2 rounded-xl text-xs font-bold border transition-all ${
+              activePane === 'history'
+                ? 'bg-purple-50 border-purple-100 text-purple-600'
+                : 'bg-transparent border-transparent hover:bg-slate-50 text-slate-500'
+            }`}
+          >
+            Lịch sử tự động (7 ngày)
+          </button>
         </div>
 
         <div className="relative w-full sm:max-w-xs">
@@ -176,7 +195,7 @@ export default function DocumentManager({ currentDoc, onSelectDoc }: DocumentMan
               </div>
             </div>
           ))
-        ) : (
+        ) : activePane === 'trash' ? (
           trashDocs.map(doc => (
             <div key={doc.uuid} className="p-5 border border-slate-100 rounded-2xl bg-slate-50/40 flex flex-col gap-3">
               <div className="flex justify-between items-start">
@@ -208,6 +227,31 @@ export default function DocumentManager({ currentDoc, onSelectDoc }: DocumentMan
               </div>
             </div>
           ))
+        ) : (
+          historyDocs.filter(d => d.doc.trich_yeu.toLowerCase().includes(searchTerm.toLowerCase())).map(item => (
+            <div key={item.id} className="p-5 border border-purple-100 rounded-2xl bg-purple-50/20 hover:bg-white flex flex-col gap-3 transition-all">
+              <div className="flex justify-between items-start">
+                <span className="text-[10px] font-bold text-slate-400">
+                  Tạo lúc: {new Date(item.timestamp).toLocaleString('vi-VN')}
+                </span>
+                <span className="px-2 py-0.5 rounded-md text-[9px] font-bold bg-purple-50 text-purple-600">Lịch sử (AI tạo)</span>
+              </div>
+
+              <h4 className="font-bold text-sm text-slate-800 line-clamp-1">{item.doc.trich_yeu || 'Văn bản không tiêu đề'}</h4>
+              <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed">{item.doc.noi_dung.substring(0, 150)}...</p>
+
+              <div className="flex gap-2 mt-2 pt-3 border-t border-purple-100/60">
+                <button
+                  type="button"
+                  onClick={() => onSelectDoc(item.doc)}
+                  className="flex-1 py-2 bg-purple-50 hover:bg-purple-100 text-purple-600 font-bold text-xs rounded-lg flex items-center justify-center gap-1 transition-all"
+                >
+                  <span className="material-icons-round text-sm">open_in_browser</span>
+                  <span>Mở xem lại</span>
+                </button>
+              </div>
+            </div>
+          ))
         )}
 
         {activePane === 'active' && activeDocs.length === 0 && (
@@ -221,6 +265,13 @@ export default function DocumentManager({ currentDoc, onSelectDoc }: DocumentMan
           <div className="col-span-full py-16 text-center text-slate-400 flex flex-col items-center gap-2">
             <span className="material-icons-round text-4xl">delete_sweep</span>
             <p className="text-xs">Thùng rác trống.</p>
+          </div>
+        )}
+
+        {activePane === 'history' && historyDocs.length === 0 && (
+          <div className="col-span-full py-16 text-center text-slate-400 flex flex-col items-center gap-2">
+            <span className="material-icons-round text-4xl">history</span>
+            <p className="text-xs">Chưa có lịch sử văn bản nào được AI tạo ra.</p>
           </div>
         )}
       </div>

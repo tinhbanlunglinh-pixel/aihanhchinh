@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { ApiSettings, generateFullDocumentWithAI, SmartComposeInput, TEN_LOAI_VB, generateMockFullDocument } from '@/lib/ai';
 import { DocTemplate } from '@/lib/templateData';
+import { saveHistory } from '@/lib/history';
 
 export interface AISmartComposerProps {
   apiSettings: ApiSettings;
@@ -69,9 +70,9 @@ export default function AISmartComposer({ apiSettings, onDocumentReady }: AISmar
         co_quan_chu_quan: isUBND ? '' : apiSettings.co_quan_chu_quan,
         co_quan_ban_hanh: isUBND ? 'ỦY BAN NHÂN DÂN XÃ NHỮ KHÊ' : 'BAN CHỈ HUY QUÂN SỰ',
         dia_danh: apiSettings.dia_danh,
-        nguoi_ky: isUBND ? apiSettings.nguoi_ky : 'Đặng Thanh Tuyền',
-        chuc_vu_ky: isUBND ? 'CHỦ TỊCH' : 'CHỈ HUY TRƯỞNG',
-        quyen_han_ky: isUBND ? 'TM. ỦY BAN NHÂN DÂN' : '',
+        nguoi_ky: isUBND ? (apiSettings.nguoi_ky || 'Nguyễn Văn A') : (apiSettings.nguoi_ky || 'Đặng Thanh Tuyền'),
+        chuc_vu_ky: isUBND ? (apiSettings.chuc_vu_ky || 'CHỦ TỊCH') : 'CHỈ HUY TRƯỞNG',
+        quyen_han_ky: isUBND ? (apiSettings.quyen_han_ky || 'TM. ỦY BAN NHÂN DÂN') : '',
         mo_ta: `${moTaPrefix} [Tham mưu cho ${isUBND ? 'UBND xã Nhữ Khê' : 'Chỉ huy trưởng BCHQS xã Nhữ Khê'}] ${inputs.mo_ta}`
       };
 
@@ -81,6 +82,7 @@ export default function AISmartComposer({ apiSettings, onDocumentReady }: AISmar
         apiSettings.apiProvider
       );
       
+      saveHistory(doc);
       onDocumentReady(doc);
     } catch (err: any) {
       console.error(err);
@@ -93,12 +95,13 @@ export default function AISmartComposer({ apiSettings, onDocumentReady }: AISmar
         co_quan_chu_quan: isUBND ? '' : apiSettings.co_quan_chu_quan,
         co_quan_ban_hanh: isUBND ? 'ỦY BAN NHÂN DÂN XÃ NHỮ KHÊ' : 'BAN CHỈ HUY QUÂN SỰ',
         dia_danh: apiSettings.dia_danh,
-        nguoi_ky: isUBND ? apiSettings.nguoi_ky : 'Đặng Thanh Tuyền',
-        chuc_vu_ky: isUBND ? 'CHỦ TỊCH' : 'CHỈ HUY TRƯỞNG',
-        quyen_han_ky: isUBND ? 'TM. ỦY BAN NHÂN DÂN' : '',
+        nguoi_ky: isUBND ? (apiSettings.nguoi_ky || 'Nguyễn Văn A') : (apiSettings.nguoi_ky || 'Đặng Thanh Tuyền'),
+        chuc_vu_ky: isUBND ? (apiSettings.chuc_vu_ky || 'CHỦ TỊCH') : 'CHỈ HUY TRƯỞNG',
+        quyen_han_ky: isUBND ? (apiSettings.quyen_han_ky || 'TM. ỦY BAN NHÂN DÂN') : '',
       };
       
       const doc = generateMockFullDocument(fallbackInputs);
+      saveHistory(doc);
       onDocumentReady(doc);
     } finally {
       setIsGenerating(false);
