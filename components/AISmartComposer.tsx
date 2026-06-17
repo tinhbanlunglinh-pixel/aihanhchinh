@@ -42,7 +42,8 @@ export default function AISmartComposer({ apiSettings, onDocumentReady }: AISmar
 
 
 
-  const [aiMode, setAiMode] = useState<'tao_moi' | 'hoan_thien'>('tao_moi');
+  const [aiMode, setAiMode] = useState<'tao_moi' | 'hoan_thien' | 'van_ban_mau'>('tao_moi');
+  const [nhomThamMuu, setNhomThamMuu] = useState<'UBND' | 'BCHQS'>('UBND');
 
   const handleNextStep = () => {
     setInputs(prev => ({ ...prev, loai_van_ban: selectedType }));
@@ -60,19 +61,52 @@ export default function AISmartComposer({ apiSettings, onDocumentReady }: AISmar
     setIsGenerating(true);
 
     try {
+      const isUBND = nhomThamMuu === 'UBND';
+      
+      let finalCoQuanBanHanh = apiSettings.co_quan_ban_hanh;
+      let finalCoQuanChuQuan = apiSettings.co_quan_chu_quan;
+      let finalNguoiKy = apiSettings.nguoi_ky;
+      let finalChucVuKy = apiSettings.chuc_vu_ky;
+      let finalQuyenHanKy = apiSettings.quyen_han_ky;
+
+      if (!isUBND) {
+        // Tham mưu cho BCHQS
+        finalCoQuanChuQuan = apiSettings.co_quan_ban_hanh; // UBND Xã là cơ quan chủ quản của Ban CHQS Xã
+        finalCoQuanBanHanh = 'BAN CHỈ HUY QUÂN SỰ';
+        
+        // Tìm người ký BCHQS trong additional_signers
+        const bchqsSigner = apiSettings.additional_signers?.find(s => 
+          s.chuc_danh.toUpperCase().includes('QUÂN SỰ') || 
+          s.chuc_danh.toUpperCase().includes('CHỈ HUY') ||
+          s.chuc_danh.toUpperCase().includes('BCHQS')
+        );
+        
+        if (bchqsSigner) {
+          finalNguoiKy = bchqsSigner.ho_ten;
+          finalChucVuKy = bchqsSigner.chuc_danh;
+        } else {
+          finalNguoiKy = '[Chờ bổ sung tên Chỉ huy trưởng]';
+          finalChucVuKy = 'CHỈ HUY TRƯỞNG';
+        }
+        finalQuyenHanKy = '';
+      }
+
       const moTaPrefix = aiMode === 'tao_moi' 
         ? '[Chế độ: Tự động sáng tạo nội dung từ chủ đề] Chủ đề: ' 
-        : '[Chế độ: Hoàn thiện văn bản từ nội dung thô] Nội dung gốc: ';
+        : aiMode === 'hoan_thien'
+        ? '[Chế độ: Hoàn thiện văn bản từ nội dung thô] Nội dung gốc: '
+        : '[Chế độ: Thay thế số liệu vào văn bản mẫu] Dữ liệu mới cần thay: ';
 
       const finalInputs: SmartComposeInput = {
         ...inputs,
-        co_quan_chu_quan: apiSettings.co_quan_chu_quan,
-        co_quan_ban_hanh: apiSettings.co_quan_ban_hanh,
+        co_quan_chu_quan: finalCoQuanChuQuan,
+        co_quan_ban_hanh: finalCoQuanBanHanh,
         dia_danh: apiSettings.dia_danh,
-        nguoi_ky: apiSettings.nguoi_ky,
-        chuc_vu_ky: apiSettings.chuc_vu_ky,
-        quyen_han_ky: apiSettings.quyen_han_ky,
-        mo_ta: `${moTaPrefix} ${inputs.mo_ta}. (Cơ quan cấu hình: ${apiSettings.co_quan_ban_hanh})`
+        nguoi_ky: finalNguoiKy,
+        chuc_vu_ky: finalChucVuKy,
+        quyen_han_ky: finalQuyenHanKy,
+        mo_ta: `${moTaPrefix} [Tham mưu cho ${finalCoQuanBanHanh}] ${inputs.mo_ta}. (Cơ quan cấu hình: ${finalCoQuanBanHanh})`,
+        van_ban_mau: aiMode === 'van_ban_mau' ? inputs.van_ban_mau : undefined
       };
 
       const doc = await generateFullDocumentWithAI(
@@ -88,14 +122,39 @@ export default function AISmartComposer({ apiSettings, onDocumentReady }: AISmar
       // Fallback to mock generation silently or with a mild warning instead of hard blocking
       alert('API đang quá tải hoặc gặp lỗi. Đang sử dụng chế độ tạo mẫu cơ bản.');
       
+      const isUBND = nhomThamMuu === 'UBND';
+      let finalCoQuanBanHanh = apiSettings.co_quan_ban_hanh;
+      let finalCoQuanChuQuan = apiSettings.co_quan_chu_quan;
+      let finalNguoiKy = apiSettings.nguoi_ky;
+      let finalChucVuKy = apiSettings.chuc_vu_ky;
+      let finalQuyenHanKy = apiSettings.quyen_han_ky;
+
+      if (!isUBND) {
+        finalCoQuanChuQuan = apiSettings.co_quan_ban_hanh;
+        finalCoQuanBanHanh = 'BAN CHỈ HUY QUÂN SỰ';
+        const bchqsSigner = apiSettings.additional_signers?.find(s => 
+          s.chuc_danh.toUpperCase().includes('QUÂN SỰ') || 
+          s.chuc_danh.toUpperCase().includes('CHỈ HUY') ||
+          s.chuc_danh.toUpperCase().includes('BCHQS')
+        );
+        if (bchqsSigner) {
+          finalNguoiKy = bchqsSigner.ho_ten;
+          finalChucVuKy = bchqsSigner.chuc_danh;
+        } else {
+          finalNguoiKy = '[Chờ bổ sung tên Chỉ huy trưởng]';
+          finalChucVuKy = 'CHỈ HUY TRƯỞNG';
+        }
+        finalQuyenHanKy = '';
+      }
+
       const fallbackInputs: SmartComposeInput = {
         ...inputs,
-        co_quan_chu_quan: apiSettings.co_quan_chu_quan,
-        co_quan_ban_hanh: apiSettings.co_quan_ban_hanh,
+        co_quan_chu_quan: finalCoQuanChuQuan,
+        co_quan_ban_hanh: finalCoQuanBanHanh,
         dia_danh: apiSettings.dia_danh,
-        nguoi_ky: apiSettings.nguoi_ky,
-        chuc_vu_ky: apiSettings.chuc_vu_ky,
-        quyen_han_ky: apiSettings.quyen_han_ky,
+        nguoi_ky: finalNguoiKy,
+        chuc_vu_ky: finalChucVuKy,
+        quyen_han_ky: finalQuyenHanKy,
       };
       
       const doc = generateMockFullDocument(fallbackInputs);
@@ -212,52 +271,157 @@ export default function AISmartComposer({ apiSettings, onDocumentReady }: AISmar
             <div className="glass-panel p-6 flex flex-col gap-5 flex-1 shadow-sm">
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
-                  <span className="material-icons-round text-emerald-500 text-sm">psychology</span>
-                  Chế độ AI xử lý
+                  <span className="material-icons-round text-blue-500 text-sm">account_balance</span>
+                  Cơ quan tham mưu (Cơ quan ban hành)
                 </label>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <label className={`cursor-pointer flex items-start gap-3 p-3 rounded-xl border ${aiMode === 'tao_moi' ? 'border-indigo-500 bg-indigo-50/50' : 'border-slate-200 bg-white hover:bg-slate-50'} transition-all`}>
+                <div className="flex gap-4">
+                  <label className="flex items-center gap-2 cursor-pointer">
                     <input 
                       type="radio" 
-                      name="aiMode" 
-                      value="tao_moi" 
-                      checked={aiMode === 'tao_moi'} 
-                      onChange={() => setAiMode('tao_moi')} 
-                      className="mt-1 w-4 h-4 text-indigo-600 bg-white border-slate-300" 
+                      name="nhomThamMuu" 
+                      value="UBND" 
+                      checked={nhomThamMuu === 'UBND'} 
+                      onChange={() => setNhomThamMuu('UBND')} 
+                      className="w-4 h-4 text-indigo-600 bg-white border-slate-300" 
                     />
-                    <div>
-                      <div className="text-sm font-semibold text-slate-800">Sáng tạo văn bản mới</div>
-                      <div className="text-xs text-slate-500 mt-0.5">Chỉ cần nhập một chủ đề ngắn, AI sẽ tự động nghĩ ra nội dung và cấu trúc đầy đủ.</div>
-                    </div>
+                    <span className="text-sm text-slate-700">UBND Xã (Mặc định)</span>
                   </label>
-                  <label className={`cursor-pointer flex items-start gap-3 p-3 rounded-xl border ${aiMode === 'hoan_thien' ? 'border-indigo-500 bg-indigo-50/50' : 'border-slate-200 bg-white hover:bg-slate-50'} transition-all`}>
+                  <label className="flex items-center gap-2 cursor-pointer">
                     <input 
                       type="radio" 
-                      name="aiMode" 
-                      value="hoan_thien" 
-                      checked={aiMode === 'hoan_thien'} 
-                      onChange={() => setAiMode('hoan_thien')} 
-                      className="mt-1 w-4 h-4 text-indigo-600 bg-white border-slate-300" 
+                      name="nhomThamMuu" 
+                      value="BCHQS" 
+                      checked={nhomThamMuu === 'BCHQS'} 
+                      onChange={() => setNhomThamMuu('BCHQS')} 
+                      className="w-4 h-4 text-indigo-600 bg-white border-slate-300" 
                     />
-                    <div>
-                      <div className="text-sm font-semibold text-slate-800">Hoàn thiện từ bản thô</div>
-                      <div className="text-xs text-slate-500 mt-0.5">Dán dàn ý hoặc văn bản thô của bạn vào, AI sẽ trau chuốt lại văn phong chuẩn nhà nước.</div>
-                    </div>
+                    <span className="text-sm text-slate-700">Ban CHQS Xã</span>
                   </label>
                 </div>
+                <p className="text-xs text-slate-500 mt-2 italic">
+                  {nhomThamMuu === 'UBND' ? 'Cơ quan ban hành là UBND Xã, người ký là Lãnh đạo UBND xã.' : 'Cơ quan ban hành là Ban CHQS, người ký là Chỉ huy trưởng. Cơ quan chủ quản tự động chuyển thành UBND Xã.'}
+                </p>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
+                  <span className="material-icons-round text-emerald-500 text-sm">psychology</span>
+                  Chế độ AI xử lý
+                </label>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <label className={`cursor-pointer flex flex-col gap-1 p-3 rounded-xl border ${aiMode === 'tao_moi' ? 'border-indigo-500 bg-indigo-50/50' : 'border-slate-200 bg-white hover:bg-slate-50'} transition-all`}>
+                    <div className="flex items-center gap-2">
+                      <input 
+                        type="radio" 
+                        name="aiMode" 
+                        value="tao_moi" 
+                        checked={aiMode === 'tao_moi'} 
+                        onChange={() => setAiMode('tao_moi')} 
+                        className="w-4 h-4 text-indigo-600 bg-white border-slate-300" 
+                      />
+                      <div className="text-sm font-semibold text-slate-800">Sáng tạo văn bản mới</div>
+                    </div>
+                    <div className="text-xs text-slate-500 pl-6">Chỉ cần nhập chủ đề ngắn, AI sẽ tự động viết nội dung và cấu trúc đầy đủ.</div>
+                  </label>
+                  
+                  <label className={`cursor-pointer flex flex-col gap-1 p-3 rounded-xl border ${aiMode === 'hoan_thien' ? 'border-indigo-500 bg-indigo-50/50' : 'border-slate-200 bg-white hover:bg-slate-50'} transition-all`}>
+                    <div className="flex items-center gap-2">
+                      <input 
+                        type="radio" 
+                        name="aiMode" 
+                        value="hoan_thien" 
+                        checked={aiMode === 'hoan_thien'} 
+                        onChange={() => setAiMode('hoan_thien')} 
+                        className="w-4 h-4 text-indigo-600 bg-white border-slate-300" 
+                      />
+                      <div className="text-sm font-semibold text-slate-800">Hoàn thiện từ bản thô</div>
+                    </div>
+                    <div className="text-xs text-slate-500 pl-6">Dán văn bản thô vào, AI sẽ trau chuốt lại văn phong chuẩn nhà nước.</div>
+                  </label>
+
+                  <label className={`cursor-pointer flex flex-col gap-1 p-3 rounded-xl border ${aiMode === 'van_ban_mau' ? 'border-indigo-500 bg-indigo-50/50' : 'border-slate-200 bg-white hover:bg-slate-50'} transition-all`}>
+                    <div className="flex items-center gap-2">
+                      <input 
+                        type="radio" 
+                        name="aiMode" 
+                        value="van_ban_mau" 
+                        checked={aiMode === 'van_ban_mau'} 
+                        onChange={() => setAiMode('van_ban_mau')} 
+                        className="w-4 h-4 text-indigo-600 bg-white border-slate-300" 
+                      />
+                      <div className="text-sm font-semibold text-slate-800">Dựa trên Văn bản mẫu</div>
+                    </div>
+                    <div className="text-xs text-slate-500 pl-6">Giữ nguyên 100% lời văn của mẫu, chỉ thay đổi số liệu/thông tin mới của bạn.</div>
+                  </label>
+                </div>
+              </div>
+
+              {aiMode === 'van_ban_mau' && (
+                <div>
+                  <div className="flex justify-between items-end mb-2">
+                    <label className="block text-sm font-medium text-slate-700 flex items-center gap-2">
+                      <span className="material-icons-round text-blue-500 text-sm">content_copy</span>
+                      Văn bản mẫu / Đề cương gốc
+                      <span className="text-red-500">*</span>
+                    </label>
+                    <label className="cursor-pointer flex items-center gap-1.5 px-3 py-1.5 bg-white shadow-sm hover:bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium text-slate-600 transition-colors">
+                      <span className="material-icons-round text-[14px]">upload_file</span>
+                      Tải file mẫu (.docx, .pdf)
+                      <input 
+                        type="file" 
+                        className="hidden" 
+                        accept=".docx,.pdf,.txt"
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            try {
+                              const formData = new FormData();
+                              formData.append('file', file);
+                              
+                              const res = await fetch('/api/extract-text', {
+                                method: 'POST',
+                                body: formData,
+                              });
+                              
+                              if (res.ok) {
+                                const data = await res.json();
+                                setInputs(prev => ({
+                                  ...prev,
+                                  van_ban_mau: data.text
+                                }));
+                              } else {
+                                alert("Lỗi khi trích xuất văn bản từ file mẫu.");
+                              }
+                            } catch (err) {
+                              alert("Lỗi khi tải file mẫu.");
+                            }
+                          }
+                        }} 
+                      />
+                    </label>
+                  </div>
+                  <textarea 
+                    className="w-full h-40 resize-none"
+                    placeholder="Dán toàn bộ nội dung của văn bản mẫu vào đây (hoặc tải file lên). AI sẽ giữ nguyên lời văn, cấu trúc của mẫu này."
+                    value={inputs.van_ban_mau || ''}
+                    onChange={e => setInputs({...inputs, van_ban_mau: e.target.value})}
+                  ></textarea>
+                </div>
+              )}
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
                   <span className="material-icons-round text-indigo-500 text-sm">edit_note</span>
-                  {aiMode === 'tao_moi' ? 'Chủ đề / Yêu cầu văn bản' : 'Nội dung thô / Dàn ý cần hoàn thiện'}
+                  {aiMode === 'tao_moi' ? 'Chủ đề / Yêu cầu văn bản' : aiMode === 'hoan_thien' ? 'Nội dung thô / Dàn ý cần hoàn thiện' : 'Số liệu / Thông tin mới của cơ quan bạn'}
                   <span className="text-red-500">*</span>
                 </label>
                 <textarea 
-                  className="w-full h-32 resize-none"
+                  className={`w-full resize-none ${aiMode === 'van_ban_mau' ? 'h-24' : 'h-32'}`}
                   placeholder={aiMode === 'tao_moi' 
                     ? "Ví dụ: Lên kế hoạch tổ chức tiêm chủng cho trẻ em. Thời gian từ ngày 15/7 đến 20/7..." 
-                    : "Dán nội dung thô của bạn vào đây. Ví dụ: 'Sắp tới 15/7 tiêm chủng trẻ em, cần trạm y tế chuẩn bị vắc xin...'"}
+                    : aiMode === 'hoan_thien'
+                    ? "Dán nội dung thô của bạn vào đây. Ví dụ: 'Sắp tới 15/7 tiêm chủng trẻ em, cần trạm y tế chuẩn bị vắc xin...'"
+                    : "Nhập các số liệu thực tế, tên dự án, sự kiện, thời gian... mà bạn muốn thay thế vào mẫu trên. Ví dụ: 'Kinh phí: 50 triệu', 'Địa điểm: Nhà văn hóa', 'Thời gian: 15/8/2026'..."}
                   value={inputs.mo_ta}
                   onChange={e => setInputs({...inputs, mo_ta: e.target.value})}
                   autoFocus

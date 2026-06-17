@@ -418,6 +418,7 @@ export interface SmartComposeInput {
   nguoi_ky?: string;
   chuc_vu_ky?: string;
   quyen_han_ky?: string;
+  van_ban_mau?: string;
 }
 
 export function generateMockFullDocument(input: SmartComposeInput): DocTemplate {
@@ -510,7 +511,36 @@ export async function generateFullDocumentWithAI(
   if (apiKey && provider) {
     const tenLoai = TEN_LOAI_VB[input.loai_van_ban] || input.loai_van_ban;
 
-    const prompt = `Hãy soạn một văn bản "${tenLoai}" với nội dung sau:
+    let prompt = '';
+    
+    if (input.van_ban_mau) {
+      prompt = `Nhiệm vụ của bạn là: DỰA TRÊN VĂN BẢN MẪU DƯỚI ĐÂY, HÃY GIỮ NGUYÊN 100% CẤU TRÚC, ĐỀ MỤC, VÀ VĂN PHONG, CHỈ ĐIỀN/THAY THẾ CÁC SỐ LIỆU VÀ THÔNG TIN MỚI.
+      
+[VĂN BẢN MẪU / ĐỀ CƯƠNG GỐC]:
+${input.van_ban_mau}
+
+[THÔNG TIN / SỐ LIỆU MỚI CẦN THAY THẾ VÀO MẪU]:
+${input.mo_ta}
+
+Thông tin BẮT BUỘC SỬ DỤNG (Tuyệt đối không được tự ý thay đổi tên cơ quan, tên người hoặc địa danh đã được cấu hình này):
+- Cơ quan chủ quản: ${input.co_quan_chu_quan || ''}
+- Cơ quan ban hành: ${input.co_quan_ban_hanh || ''}
+- Địa danh: ${input.dia_danh || ''}
+- Người ký: ${input.nguoi_ky || ''}
+- Chức vụ ký: ${input.chuc_vu_ky || ''}
+- Quyền hạn ký: ${input.quyen_han_ky || ''}
+
+LƯU Ý:
+1. Bạn đóng vai trò như một chức năng "Tìm và Thay thế thông minh". Không tự ý gọt giũa hay viết lại lời văn của bản mẫu (trừ khi sai chính tả).
+2. Tự động tìm các số liệu cũ, tên sự kiện cũ, thời gian cũ trong bản mẫu để thay thế bằng thông tin mới tương ứng.
+3. Thay thế tên cơ quan, địa danh cũ trong bản mẫu thành tên cơ quan cấu hình ở trên.
+4. Tự động điền năm hiện tại là ${new Date().getFullYear()} vào các vị trí thời gian.
+5. Trích yếu: KHÔNG viết lặp lại chữ "V/v".
+6. YÊU CẦU CHẤT LƯỢNG: Nội dung phải được trình bày đầy đủ, ổn định như một chuyên gia. Nếu bắt buộc phải có số liệu/tên người cụ thể mà không tìm thấy trong dữ liệu mới, bắt buộc ghi '[Chờ bổ sung]', tuyệt đối không tự bịa đặt.
+
+Trả về JSON object duy nhất theo đúng cấu trúc đã hướng dẫn. KHÔNG trả về markdown hay text khác.`;
+    } else {
+      prompt = `Hãy soạn một văn bản "${tenLoai}" với nội dung sau:
 
 Mô tả yêu cầu: ${input.mo_ta}
 
@@ -523,15 +553,17 @@ Thông tin BẮT BUỘC SỬ DỤNG (Tuyệt đối không được tự ý thay
 - Quyền hạn ký: ${input.quyen_han_ky || ''}
 
 LƯU Ý DÀNH RIÊNG CHO BẠN:
-1. Tôi là cán bộ cấp xã, do đó hãy sử dụng văn phong, thuật ngữ, thẩm quyền phù hợp với cấp chính quyền cơ sở (cấp xã).
+1. Tôi là cán bộ cấp xã, do đó hãy sử dụng văn phong, thuật ngữ, thẩm quyền phù hợp với cấp chính quyền cơ sở (cấp xã) hoặc quân sự cơ sở (Ban CHQS xã).
 2. Thời gian: Tự động điền năm hiện tại là ${new Date().getFullYear()} vào tất cả các vị trí thời gian, địa danh hợp lý trong văn bản.
 3. Trích yếu: KHÔNG viết lặp lại chữ "V/v". Chỉ dùng một chữ "V/v" duy nhất đối với công văn.
+4. YÊU CẦU CHẤT LƯỢNG CHUYÊN GIA: Nội dung sinh ra phải đảm bảo đầy đủ, logic, văn phong sắc bén, ổn định như một chuyên gia hành chính/quân sự. KHÔNG được viết sơ sài, chung chung. Nếu vị trí nào bắt buộc phải có số liệu cụ thể (VD: số tiền, số lượng, tên địa điểm chi tiết) mà chưa được cung cấp, bắt buộc dùng chữ '[Chờ bổ sung]', TUYỆT ĐỐI không tự bịa đặt số liệu giả.
 
 ${input.can_cu_phap_ly ? `Căn cứ pháp lý do người dùng cung cấp:\n${input.can_cu_phap_ly}\n=> Hãy sử dụng các căn cứ này và bổ sung thêm các căn cứ mới nhất có liên quan (nếu cần thiết).` : `Người dùng chưa cung cấp căn cứ pháp lý => BẠN PHẢI TỰ ĐỘNG TÌM VÀ BỔ SUNG các căn cứ (Luật, Nghị định, Thông tư...) mới nhất, phù hợp nhất với chủ đề văn bản. Ưu tiên Luật từ năm 2025 trở đi.`}
 
 ${input.tai_lieu_tham_khao ? `Tài liệu tham khảo / Số liệu nguồn:\n${input.tai_lieu_tham_khao}\n=> Hãy trích xuất số liệu, thông tin quan trọng từ tài liệu này để đưa vào nội dung văn bản.` : ''}
 
 Trả về JSON object duy nhất theo đúng cấu trúc đã hướng dẫn. KHÔNG trả về markdown hay text khác.`;
+    }
 
     try {
       const raw = await callRealAI(prompt, FULL_DOC_SYSTEM_INSTRUCTION, apiKey, provider);
