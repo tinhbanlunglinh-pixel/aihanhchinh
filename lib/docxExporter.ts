@@ -4,6 +4,16 @@ import {
 } from 'docx';
 import { DocTemplate } from './templateData';
 
+// Detect major heading lines (Roman numeral or numbered headings in ALL CAPS)
+function isHeadingLine(text: string): boolean {
+  const trimmed = text.trim();
+  // Roman numeral headings: I. II. III. IV. V. etc followed by uppercase
+  if (/^(I{1,3}|IV|VI{0,3}|IX|X{0,3})[\.\)]\s+[A-ZÀ-ỹĐ]/.test(trimmed)) return true;
+  // Section headings like 'Phần I', 'Phần II'
+  if (/^Phần\s+(I|II|III|IV|V|thứ)/i.test(trimmed)) return true;
+  return false;
+}
+
 // ====== KHAI BÁO HẰNG SỐ THỂ THỨC (NĐ30) ======
 const FONT_NAME = 'Times New Roman';
 
@@ -195,7 +205,7 @@ export async function exportToDocx(data: DocTemplate): Promise<Blob> {
       if (!/^căn cứ/i.test(text) && !/^xét/i.test(text) && !/^theo/i.test(text)) text = 'Căn cứ ' + text;
       return new Paragraph({
         alignment: AlignmentType.JUSTIFIED,
-        indent: { left: 567 }, // Thụt lề dòng đầu
+        indent: { firstLine: 720 }, // Thụt dòng đầu 1.27cm (NĐ30)
         spacing: { before: 80, after: 80 },
         children: [new TextRun({ text: text, font: FONT_NAME, size: 28, italics: true })] // 14pt italic
       });
@@ -206,7 +216,7 @@ export async function exportToDocx(data: DocTemplate): Promise<Blob> {
       children.push(
         new Paragraph({
           alignment: AlignmentType.JUSTIFIED,
-          indent: { left: 567 },
+          indent: { firstLine: 720 },
           spacing: { before: 80, after: 120 },
           children: [new TextRun({ text: data.theo_de_nghi, font: FONT_NAME, size: 28, italics: true })]
         })
@@ -252,11 +262,16 @@ export async function exportToDocx(data: DocTemplate): Promise<Blob> {
       }
     }
 
+    const isMajorHeading = /^\s*(I{1,3}|IV|VI{0,3}|IX|X{0,3})[\.\)]\s+[A-ZÀ-ỹĐ]/.test(formattedText.trim());
+    const isCenterHeading = /^Phần\s+(I|II|III|IV|V|thứ)/i.test(formattedText.trim());
+    const heading = isMajorHeading || isCenterHeading;
+    const isList = formattedText.startsWith('-') || formattedText.startsWith('+');
+
     return new Paragraph({
-      alignment: AlignmentType.JUSTIFIED,
-      indent: { left: 567 }, // Thụt đầu dòng 1cm
-      spacing: { before: 120, after: 120, line: 340, lineRule: LineRuleType.AT_LEAST }, // Cách đoạn 6pt, dãn dòng 17pt exact
-      children: [new TextRun({ text: formattedText, font: FONT_NAME, size: 28 })] // 14pt thường
+      alignment: heading ? AlignmentType.CENTER : AlignmentType.JUSTIFIED,
+      indent: heading ? undefined : (isList ? { left: 720 } : { firstLine: 720 }), 
+      spacing: { before: 120, after: 120, line: 360, lineRule: LineRuleType.AUTO }, 
+      children: [new TextRun({ text: formattedText, font: FONT_NAME, size: 28, bold: heading })]
     });
   });
   children.push(...bodyParagraphs);
@@ -294,8 +309,8 @@ export async function exportToDocx(data: DocTemplate): Promise<Blob> {
 
       return new Paragraph({
         alignment: AlignmentType.JUSTIFIED,
-        indent: { left: 567 },
-        spacing: { before: 120, after: 120, line: 340, lineRule: LineRuleType.AT_LEAST },
+        indent: { firstLine: 720 }, // Thụt dòng đầu 1.27cm (NĐ30)
+        spacing: { before: 120, after: 120, line: 360, lineRule: LineRuleType.AT_LEAST },
         children: [
           new TextRun({ text: label, font: FONT_NAME, size: 28, bold: true }),
           new TextRun({ text: finalContent, font: FONT_NAME, size: 28 })
@@ -381,7 +396,7 @@ export async function exportToDocx(data: DocTemplate): Promise<Blob> {
             new TableCell({
               width: { size: halfWidth, type: WidthType.DXA },
               borders: BORDERS_NONE,
-              children: buildSignCol('CHỦ TRÌ', data.dong_quyet_dinh || 'Nguyễn Văn Chiến')
+              children: buildSignCol('CHỦ TRÌ', data.dong_quyet_dinh || 'Đỗ Chí Thanh')
             })
           ]
         })

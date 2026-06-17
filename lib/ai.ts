@@ -1,3 +1,9 @@
+export interface AdditionalSigner {
+  id: string;
+  chuc_danh: string;
+  ho_ten: string;
+}
+
 export interface ApiSettings {
   geminiKey: string;
   openaiKey: string;
@@ -8,6 +14,8 @@ export interface ApiSettings {
   nguoi_ky: string;
   chuc_vu_ky: string;
   quyen_han_ky: string;
+  additional_signers?: AdditionalSigner[];
+  lastUpdated?: string;
 }
 
 export interface AIInputs {
@@ -613,5 +621,90 @@ Hãy trả lời câu hỏi của người dùng một cách chính xác, dẫn 
         resolve(matchedAnswer);
       }, 800);
     });
+  }
+}
+
+export async function analyzeDocumentErrorsWithAI(
+  text: string,
+  apiKey?: string,
+  provider: 'gemini' | 'openai' = 'gemini'
+): Promise<any[]> {
+  const prompt = `Bạn là chuyên gia về soạn thảo văn bản hành chính theo Nghị định 30/2020/NĐ-CP và rà soát lỗi chính tả.
+Nhiệm vụ của bạn là phân tích đoạn văn bản thô được trích xuất từ file của người dùng, tìm ra các lỗi chính tả và lỗi sai thể thức so với chuẩn NĐ30.
+Văn bản thô:
+"""
+${text.substring(0, 8000)}
+"""
+
+Hãy phân tích và trả về CHỈ MỘT MẢNG JSON theo định dạng sau:
+[
+  {
+    "type": "spelling", 
+    "message": "Sai chính tả chữ '...', đúng phải là '...'",
+    "context": "đoạn văn chứa từ sai để người dùng dễ tìm",
+    "suggestion": "từ đúng"
+  },
+  {
+    "type": "format",
+    "message": "Lỗi thể thức: Thiếu nơi nhận / Chữ Kính gửi in đậm / v.v...",
+    "context": "đoạn văn chứa lỗi",
+    "suggestion": "cách sửa chuẩn NĐ30"
+  }
+]
+Nếu không có lỗi nào, hãy trả về mảng rỗng [].`;
+
+  if (!apiKey) throw new Error('Cần cung cấp API Key để sử dụng tính năng phân tích bằng AI.');
+
+  if (provider === 'gemini') {
+    try {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: { temperature: 0.1, response_mime_type: "application/json" }
+        })
+      });
+
+      if (!response.ok) throw new Error('API request failed');
+      const data = await response.json();
+      const rawResult = data.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!rawResult) return [];
+      
+      const cleanJson = rawResult.replace(/```json/g, '').replace(/```/g, '').trim();
+      return JSON.parse(cleanJson);
+    } catch (e) {
+      console.error(e);
+      throw new Error('Không thể phân tích lỗi bằng AI (Gemini).');
+    }
+  } else {
+    try {
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          messages: [{ role: 'user', content: prompt }],
+          temperature: 0.1,
+          response_format: { type: "json_object" }
+        })
+      });
+
+      if (!response.ok) throw new Error('API request failed');
+      const data = await response.json();
+      const rawResult = data.choices?.[0]?.message?.content;
+      if (!rawResult) return [];
+      
+      const parsed = JSON.parse(rawResult);
+      if (Array.isArray(parsed)) return parsed;
+      if (parsed.errors && Array.isArray(parsed.errors)) return parsed.errors;
+      return Object.values(parsed)[0] as any[] || [];
+    } catch (e) {
+      console.error(e);
+      throw new Error('Không thể phân tích lỗi bằng AI (OpenAI).');
+    }
   }
 }

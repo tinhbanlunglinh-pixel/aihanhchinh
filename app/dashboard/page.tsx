@@ -31,7 +31,7 @@ export default function Dashboard() {
     noi_dung: 'Nhằm đẩy mạnh chuyển đổi số và nâng cao chỉ số cải cách hành chính (CCHC) tại địa phương. UBND xã Nhữ Khê yêu cầu các ban ngành đoàn thể, công chức chuyên môn và Ban chỉ sự các thôn bản tập trung triển khai các giải pháp sau:\n1. Nâng cao tinh thần trách nhiệm, thái độ phục vụ nhân dân tại bộ phận Một cửa.\n2. Tăng cường tuyên truyền, hướng dẫn người dân nộp hồ sơ trực tuyến thông qua cổng dịch vụ công.\n3. Định kỳ báo cáo tiến độ và kết quả thực hiện trước ngày 25 hàng tháng.\nYêu cầu các đơn vị nghiêm túc thực hiện./.',
     quyen_han_ky: 'TM. ỦY BAN NHÂN DÂN',
     chuc_vu_ky: 'CHỦ TỊCH',
-    nguoi_ky: 'Nguyễn Văn Chiến',
+    nguoi_ky: 'Đỗ Chí Thanh',
     noi_nhan: ['Như trên;', 'Lưu: VT, VP.']
   });
 
@@ -41,10 +41,13 @@ export default function Dashboard() {
     apiProvider: 'gemini' as 'gemini' | 'openai',
     co_quan_chu_quan: 'ỦY BAN NHÂN DÂN TỈNH TUYÊN QUANG',
     co_quan_ban_hanh: 'ỦY BAN NHÂN DÂN XÃ NHỮ KHÊ',
-    dia_danh: 'Nhữ Khê',
-    nguoi_ky: 'Nguyễn Văn Chiến',
+    dia_danh: 'Tuyên Quang',
+    nguoi_ky: 'Đỗ Chí Thanh',
     chuc_vu_ky: 'CHỦ TỊCH',
-    quyen_han_ky: 'TM. ỦY BAN NHÂN DÂN'
+    quyen_han_ky: 'TM. ỦY BAN NHÂN DÂN',
+    additional_signers: [
+      { id: '1', chuc_danh: 'CHỈ HUY TRƯỞNG BAN CHỈ HUY QUÂN SỰ XÃ', ho_ten: 'Lê Như Điện' }
+    ]
   });
 
   // Load Settings from LocalStorage on mount
@@ -134,10 +137,7 @@ export default function Dashboard() {
       case 'checker':
         return (
           <FormattingChecker 
-            documentText={editorData.noi_dung} 
-            documentData={editorData}
-            onUpdateContent={(val) => setEditorData(prev => ({ ...prev, noi_dung: val }))}
-            onUpdateData={(newData) => setEditorData(newData)}
+            apiSettings={apiSettings}
           />
         );
       case 'converter':
@@ -209,10 +209,7 @@ export default function Dashboard() {
             </span>
           </div>
           <div className="flex items-center gap-4">
-            <span className="px-3 py-1 bg-green-50 text-green-700 border border-green-200 text-xs font-semibold rounded-full flex items-center gap-1.5 shadow-sm">
-              <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-              <span>Offline/Online Mode</span>
-            </span>
+
             <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-xs shadow-md shadow-blue-500/10 uppercase">
               {user ? user.name.charAt(0) : 'CB'}
             </div>

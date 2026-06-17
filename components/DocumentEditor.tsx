@@ -833,12 +833,14 @@ export default function DocumentEditor({ data, setData, apiSettings }: DocumentE
                     .filter(p => p.trim() !== '') // Remove completely empty paragraphs
                     .map((paragraph, idx) => {
                       const isList = paragraph.trim().startsWith('-') || paragraph.trim().startsWith('+');
+                      const isHeading = /^\s*(I{1,3}|IV|VI{0,3}|IX|X{0,3})[\.\)]\s+[A-ZÀ-ỹĐ]/.test(paragraph.trim());
                       return (
                         <div key={idx} style={{ 
-                          textIndent: isList ? '0' : '1.27cm', 
+                          textIndent: (isList || isHeading) ? '0' : '1.27cm', 
                           paddingLeft: isList ? '1.27cm' : '0',
-                          textAlign: 'justify', 
-                          marginBottom: '6pt' 
+                          textAlign: isHeading ? 'center' as const : 'justify' as const, 
+                          marginBottom: '6pt',
+                          fontWeight: isHeading ? 'bold' : 'normal',
                         }}>
                           {paragraph}
                         </div>
@@ -884,7 +886,7 @@ export default function DocumentEditor({ data, setData, apiSettings }: DocumentE
                                 <td>
                                   <div className="a4-bold text-[12pt] uppercase">CHỦ TRÌ</div>
                                   <div className="a4-sig-space"></div>
-                                  <div className="a4-bold text-[13pt]">{data.dong_quyet_dinh || 'Nguyễn Văn Chiến'}</div>
+                                  <div className="a4-bold text-[13pt]">{data.dong_quyet_dinh || 'Đỗ Chí Thanh'}</div>
                                 </td>
                               </tr>
                             </tbody>

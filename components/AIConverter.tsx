@@ -14,6 +14,11 @@ export default function AIConverter({ apiSettings, onGenerateDoc }: AIConverterP
   const [targetType, setTargetType] = useState<string>('thong_bao');
   const [loading, setLoading] = useState<boolean>(false);
   const [resultText, setResultText] = useState<string>('');
+  
+  // New State for PDF to Word
+  const [pdfFile, setPdfFile] = useState<File | null>(null);
+  const [pdfLoading, setPdfLoading] = useState<boolean>(false);
+  const [activeConverterTab, setActiveConverterTab] = useState<'text' | 'pdf'>('text');
 
   const handleConvert = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,15 +78,34 @@ export default function AIConverter({ apiSettings, onGenerateDoc }: AIConverterP
 
   return (
     <div className="bg-white border border-slate-200/80 rounded-3xl p-6 shadow-sm flex flex-col gap-6">
-      <div className="flex items-center gap-2.5 text-blue-600">
-        <span className="material-icons-round text-2xl">swap_horiz</span>
-        <h2 className="text-lg font-bold">Chuyển đổi định dạng văn bản bằng AI</h2>
+      <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+        <div className="flex items-center gap-2.5 text-blue-600">
+          <span className="material-icons-round text-2xl">swap_horiz</span>
+          <h2 className="text-lg font-bold">Trợ Lý Chuyển Đổi Định Dạng</h2>
+        </div>
+        <div className="flex gap-2">
+          <button 
+            onClick={() => setActiveConverterTab('text')}
+            className={`px-4 py-2 text-sm font-semibold rounded-xl transition-all ${activeConverterTab === 'text' ? 'bg-blue-50 text-blue-700' : 'text-slate-500 hover:bg-slate-50'}`}
+          >
+            Chuyển Đổi Thông Minh (AI)
+          </button>
+          <button 
+            onClick={() => setActiveConverterTab('pdf')}
+            className={`px-4 py-2 text-sm font-semibold rounded-xl transition-all ${activeConverterTab === 'pdf' ? 'bg-red-50 text-red-700' : 'text-slate-500 hover:bg-slate-50'}`}
+          >
+            PDF sang Word
+          </button>
+        </div>
       </div>
-      <p className="text-slate-500 text-xs leading-relaxed -mt-4">
-        Nhập văn bản nguồn (ví dụ: Biên bản cuộc họp thô hoặc Đoạn hội thoại ghi âm) và chọn loại văn bản hành chính cần xuất ra. AI sẽ tự động định cấu trúc lại cho bạn.
-      </p>
 
-      <form onSubmit={handleConvert} className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+      {activeConverterTab === 'text' ? (
+        <>
+          <p className="text-slate-500 text-xs leading-relaxed -mt-2">
+            Nhập văn bản nguồn (ví dụ: Biên bản cuộc họp thô hoặc Đoạn hội thoại ghi âm) và chọn loại văn bản hành chính cần xuất ra. AI sẽ tự động định cấu trúc lại cho bạn.
+          </p>
+
+          <form onSubmit={handleConvert} className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Source Text Area (Left) */}
         <div className="lg:col-span-6 flex flex-col gap-4">
           <div className="flex flex-col gap-1.5">
@@ -165,6 +189,68 @@ export default function AIConverter({ apiSettings, onGenerateDoc }: AIConverterP
           )}
         </div>
       </form>
+      </>
+      ) : (
+        /* PDF TO WORD TAB */
+        <div className="flex flex-col gap-6 min-h-[400px]">
+          <p className="text-slate-500 text-xs leading-relaxed -mt-2">
+            Tải lên file PDF để hệ thống trích xuất nội dung và chuyển đổi sang file Word (.docx) tương ứng. Lưu ý: Tính năng tập trung phục hồi bố cục text cơ bản.
+          </p>
+
+          <div 
+            className="flex-1 flex flex-col items-center justify-center p-8 border-2 border-dashed border-red-200 bg-red-50/30 rounded-2xl relative"
+          >
+            <input 
+              type="file" 
+              accept=".pdf"
+              className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                setPdfFile(file);
+                setPdfLoading(true);
+
+                try {
+                  const formData = new FormData();
+                  formData.append('file', file);
+                  const res = await fetch('/api/extract-text', { method: 'POST', body: formData });
+                  if (!res.ok) throw new Error('Lỗi khi đọc file PDF');
+                  const data = await res.json();
+                  
+                  // Construct basic DocTemplate for export
+                  const pdfDoc: DocTemplate = {
+                    id: 'cong_van',
+                    name: 'Văn bản chuyển đổi từ PDF',
+                    code: 'PDF',
+                    description: '',
+                    co_quan_ban_hanh: apiSettings.co_quan_ban_hanh,
+                    so_ky_hieu: 'Số:      /UBND-VP',
+                    dia_danh: apiSettings.dia_danh,
+                    trich_yeu: file.name,
+                    noi_dung: data.text,
+                    noi_nhan: [],
+                    quyen_han_ky: '',
+                    chuc_vu_ky: '',
+                    nguoi_ky: ''
+                  };
+                  onGenerateDoc(pdfDoc);
+                  alert('Chuyển đổi thành công! Văn bản đã được đưa vào trình soạn thảo để bạn tải về file Word.');
+                } catch (err: any) {
+                  alert(err.message || 'Lỗi xử lý file.');
+                } finally {
+                  setPdfLoading(false);
+                  setPdfFile(null);
+                }
+              }}
+            />
+            <span className="material-icons-round text-5xl text-red-300 mb-3">picture_as_pdf</span>
+            <p className="text-sm font-semibold text-slate-700 mb-1">
+              {pdfLoading ? 'Đang phân tích PDF...' : 'Kéo thả hoặc click để chọn file PDF'}
+            </p>
+            {pdfLoading && <span className="material-icons-round animate-spin text-red-500 mt-2">autorenew</span>}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

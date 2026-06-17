@@ -91,7 +91,7 @@ export default function Sidebar({ activeTab, setActiveTab, collapsed = false, se
         {!collapsed ? (
           <div>
             <p className="font-semibold text-slate-400">Hệ thống SaaS v1.0.0</p>
-            <p className="mt-1">Đáp ứng chuẩn thể thức NĐ30 & HD36</p>
+            <p className="mt-1">Hệ thống soạn thảo văn bản hành chính</p>
           </div>
         ) : (
           <span className="material-icons-round text-slate-600">verified_user</span>
