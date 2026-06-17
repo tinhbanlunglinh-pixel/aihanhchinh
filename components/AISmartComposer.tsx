@@ -40,7 +40,8 @@ export default function AISmartComposer({ apiSettings, onDocumentReady }: AISmar
     tai_lieu_tham_khao: '',
   });
 
-  const [nhomThamMuu, setNhomThamMuu] = useState<'UBND' | 'BCHQS'>('UBND');
+
+
   const [aiMode, setAiMode] = useState<'tao_moi' | 'hoan_thien'>('tao_moi');
 
   const handleNextStep = () => {
@@ -59,21 +60,19 @@ export default function AISmartComposer({ apiSettings, onDocumentReady }: AISmar
     setIsGenerating(true);
 
     try {
-      const isUBND = nhomThamMuu === 'UBND';
-
       const moTaPrefix = aiMode === 'tao_moi' 
         ? '[Chế độ: Tự động sáng tạo nội dung từ chủ đề] Chủ đề: ' 
         : '[Chế độ: Hoàn thiện văn bản từ nội dung thô] Nội dung gốc: ';
 
       const finalInputs: SmartComposeInput = {
         ...inputs,
-        co_quan_chu_quan: isUBND ? '' : apiSettings.co_quan_chu_quan,
-        co_quan_ban_hanh: isUBND ? 'ỦY BAN NHÂN DÂN XÃ NHỮ KHÊ' : 'BAN CHỈ HUY QUÂN SỰ',
+        co_quan_chu_quan: apiSettings.co_quan_chu_quan,
+        co_quan_ban_hanh: apiSettings.co_quan_ban_hanh,
         dia_danh: apiSettings.dia_danh,
-        nguoi_ky: isUBND ? (apiSettings.nguoi_ky || 'Nguyễn Văn A') : (apiSettings.nguoi_ky || 'Đặng Thanh Tuyền'),
-        chuc_vu_ky: isUBND ? (apiSettings.chuc_vu_ky || 'CHỦ TỊCH') : 'CHỈ HUY TRƯỞNG',
-        quyen_han_ky: isUBND ? (apiSettings.quyen_han_ky || 'TM. ỦY BAN NHÂN DÂN') : '',
-        mo_ta: `${moTaPrefix} [Tham mưu cho ${isUBND ? 'UBND xã Nhữ Khê' : 'Chỉ huy trưởng BCHQS xã Nhữ Khê'}] ${inputs.mo_ta}`
+        nguoi_ky: apiSettings.nguoi_ky,
+        chuc_vu_ky: apiSettings.chuc_vu_ky,
+        quyen_han_ky: apiSettings.quyen_han_ky,
+        mo_ta: `${moTaPrefix} ${inputs.mo_ta}. (Cơ quan cấu hình: ${apiSettings.co_quan_ban_hanh})`
       };
 
       const doc = await generateFullDocumentWithAI(
@@ -89,15 +88,14 @@ export default function AISmartComposer({ apiSettings, onDocumentReady }: AISmar
       // Fallback to mock generation silently or with a mild warning instead of hard blocking
       alert('API đang quá tải hoặc gặp lỗi. Đang sử dụng chế độ tạo mẫu cơ bản.');
       
-      const isUBND = nhomThamMuu === 'UBND';
       const fallbackInputs: SmartComposeInput = {
         ...inputs,
-        co_quan_chu_quan: isUBND ? '' : apiSettings.co_quan_chu_quan,
-        co_quan_ban_hanh: isUBND ? 'ỦY BAN NHÂN DÂN XÃ NHỮ KHÊ' : 'BAN CHỈ HUY QUÂN SỰ',
+        co_quan_chu_quan: apiSettings.co_quan_chu_quan,
+        co_quan_ban_hanh: apiSettings.co_quan_ban_hanh,
         dia_danh: apiSettings.dia_danh,
-        nguoi_ky: isUBND ? (apiSettings.nguoi_ky || 'Nguyễn Văn A') : (apiSettings.nguoi_ky || 'Đặng Thanh Tuyền'),
-        chuc_vu_ky: isUBND ? (apiSettings.chuc_vu_ky || 'CHỦ TỊCH') : 'CHỈ HUY TRƯỞNG',
-        quyen_han_ky: isUBND ? (apiSettings.quyen_han_ky || 'TM. ỦY BAN NHÂN DÂN') : '',
+        nguoi_ky: apiSettings.nguoi_ky,
+        chuc_vu_ky: apiSettings.chuc_vu_ky,
+        quyen_han_ky: apiSettings.quyen_han_ky,
       };
       
       const doc = generateMockFullDocument(fallbackInputs);
@@ -212,40 +210,6 @@ export default function AISmartComposer({ apiSettings, onDocumentReady }: AISmar
             </div>
 
             <div className="glass-panel p-6 flex flex-col gap-5 flex-1 shadow-sm">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
-                  <span className="material-icons-round text-blue-500 text-sm">account_balance</span>
-                  Cơ quan tham mưu (Cơ quan ban hành)
-                </label>
-                <div className="flex gap-4">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input 
-                      type="radio" 
-                      name="nhomThamMuu" 
-                      value="UBND" 
-                      checked={nhomThamMuu === 'UBND'} 
-                      onChange={() => setNhomThamMuu('UBND')} 
-                      className="w-4 h-4 text-indigo-600 bg-white border-slate-300" 
-                    />
-                    <span className="text-sm text-slate-700">UBND Xã Nhữ Khê</span>
-                  </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input 
-                      type="radio" 
-                      name="nhomThamMuu" 
-                      value="BCHQS" 
-                      checked={nhomThamMuu === 'BCHQS'} 
-                      onChange={() => setNhomThamMuu('BCHQS')} 
-                      className="w-4 h-4 text-indigo-600 bg-white border-slate-300" 
-                    />
-                    <span className="text-sm text-slate-700">Ban CHQS Xã Nhữ Khê</span>
-                  </label>
-                </div>
-                <p className="text-xs text-slate-500 mt-2 italic">
-                  {nhomThamMuu === 'UBND' ? 'Mặc định không có cơ quan chủ quản. Nơi nhận: Bộ CHQS tỉnh, Đảng ủy.' : 'Mặc định cơ quan chủ quản là UBND xã. Nơi nhận: Chủ tịch UBND xã, Bộ CHQS tỉnh.'}
-                </p>
-              </div>
-
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-2 flex items-center gap-2">
                   <span className="material-icons-round text-emerald-500 text-sm">psychology</span>

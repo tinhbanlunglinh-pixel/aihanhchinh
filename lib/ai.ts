@@ -514,15 +514,20 @@ export async function generateFullDocumentWithAI(
 
 Mô tả yêu cầu: ${input.mo_ta}
 
-Thông tin cơ quan:
-- Cơ quan chủ quản: ${input.co_quan_chu_quan || '[Tự xác định phù hợp]'}
-- Cơ quan ban hành: ${input.co_quan_ban_hanh || '[Tự xác định phù hợp]'}
-- Địa danh: ${input.dia_danh || '[Tự xác định]'}
-- Người ký: ${input.nguoi_ky || '[Chờ bổ sung]'}
-- Chức vụ ký: ${input.chuc_vu_ky || '[Tự xác định phù hợp]'}
-- Quyền hạn ký: ${input.quyen_han_ky || '[Tự xác định phù hợp theo cấp ký]'}
+Thông tin BẮT BUỘC SỬ DỤNG (Tuyệt đối không được tự ý thay đổi tên cơ quan, tên người hoặc địa danh đã được cấu hình này, cho dù nội dung văn bản nói về vấn đề gì, kể cả quân sự hay đoàn thể):
+- Cơ quan chủ quản: ${input.co_quan_chu_quan || ''}
+- Cơ quan ban hành: ${input.co_quan_ban_hanh || ''}
+- Địa danh: ${input.dia_danh || ''}
+- Người ký: ${input.nguoi_ky || ''}
+- Chức vụ ký: ${input.chuc_vu_ky || ''}
+- Quyền hạn ký: ${input.quyen_han_ky || ''}
 
-${input.can_cu_phap_ly ? `Căn cứ pháp lý do người dùng cung cấp:\n${input.can_cu_phap_ly}\n=> Hãy sử dụng các căn cứ này và bổ sung thêm các căn cứ mới nhất có liên quan (nếu cần thiết).` : 'Người dùng chưa cung cấp căn cứ pháp lý => BẠN PHẢI TỰ ĐỘNG TÌM VÀ BỔ SUNG các căn cứ (Luật, Nghị định, Thông tư...) mới nhất, phù hợp nhất với chủ đề văn bản.'}
+LƯU Ý DÀNH RIÊNG CHO BẠN:
+1. Tôi là cán bộ cấp xã, do đó hãy sử dụng văn phong, thuật ngữ, thẩm quyền phù hợp với cấp chính quyền cơ sở (cấp xã).
+2. Thời gian: Tự động điền năm hiện tại là ${new Date().getFullYear()} vào tất cả các vị trí thời gian, địa danh hợp lý trong văn bản.
+3. Trích yếu: KHÔNG viết lặp lại chữ "V/v". Chỉ dùng một chữ "V/v" duy nhất đối với công văn.
+
+${input.can_cu_phap_ly ? `Căn cứ pháp lý do người dùng cung cấp:\n${input.can_cu_phap_ly}\n=> Hãy sử dụng các căn cứ này và bổ sung thêm các căn cứ mới nhất có liên quan (nếu cần thiết).` : `Người dùng chưa cung cấp căn cứ pháp lý => BẠN PHẢI TỰ ĐỘNG TÌM VÀ BỔ SUNG các căn cứ (Luật, Nghị định, Thông tư...) mới nhất, phù hợp nhất với chủ đề văn bản. Ưu tiên Luật từ năm 2025 trở đi.`}
 
 ${input.tai_lieu_tham_khao ? `Tài liệu tham khảo / Số liệu nguồn:\n${input.tai_lieu_tham_khao}\n=> Hãy trích xuất số liệu, thông tin quan trọng từ tài liệu này để đưa vào nội dung văn bản.` : ''}
 
